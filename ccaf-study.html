@@ -1,0 +1,3470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCAF 対策ページ — Claude Code 認定試験総合学習ノート</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --bg-elev: #ffffff;
+    --bg-code: #f4f1ea;
+    --bg-side: #f0ede5;
+    --text: #1a1a1a;
+    --text-dim: #5a5a5a;
+    --text-muted: #888;
+    --border: #e3dfd2;
+    --accent: #b85c00;
+    --accent-soft: #f5e6d3;
+    --link: #0066cc;
+    --star: #d4a017;
+    --table-header: #ede8db;
+    --table-row-alt: #faf8f2;
+    --highlight: #fff3a0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+    --code-key: #b85c00;
+    --code-str: #0a7d3a;
+    --code-com: #999;
+    --code-fn: #6b3aa3;
+    --check-done: #2e8b57;
+  }
+  [data-theme="dark"] {
+    --bg: #1a1a1f;
+    --bg-elev: #23232a;
+    --bg-code: #2a2a32;
+    --bg-side: #1e1e24;
+    --text: #e8e6e0;
+    --text-dim: #b0aea7;
+    --text-muted: #8a8780;
+    --border: #34343d;
+    --accent: #ffa657;
+    --accent-soft: #3a2a18;
+    --link: #58a6ff;
+    --star: #f0c674;
+    --table-header: #2d2d36;
+    --table-row-alt: #20202a;
+    --highlight: #5a4a00;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+    --code-key: #ffa657;
+    --code-str: #7ee787;
+    --code-com: #8b949e;
+    --code-fn: #d2a8ff;
+    --check-done: #7ee787;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 15.5px;
+    transition: background 0.2s, color 0.2s;
+  }
+  /* === Header === */
+  header.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  header h1 .badge {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .search-box {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 14px 8px 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box::before {
+    content: "🔍";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.6;
+  }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+  .icon-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .icon-btn.primary-action {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .icon-btn.primary-action:hover { opacity: 0.9; background: var(--accent); color: white; }
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 200;
+    width: 0%;
+    transition: width 0.1s;
+  }
+  /* === Layout === */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 24px;
+    padding: 24px;
+  }
+  /* === Sidebar === */
+  aside.sidebar {
+    position: sticky;
+    top: 70px;
+    align-self: start;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    background: var(--bg-side);
+    border-radius: 10px;
+    padding: 20px 16px;
+    border: 1px solid var(--border);
+  }
+  aside h3 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  aside .nav-section { margin-bottom: 18px; }
+  aside .nav-section > .section-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--accent);
+    padding: 4px 0;
+    margin-bottom: 4px;
+  }
+  aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  aside li a {
+    display: block;
+    padding: 5px 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: all 0.12s;
+  }
+  aside li a:hover {
+    background: var(--bg-elev);
+    color: var(--text);
+    border-left-color: var(--accent);
+  }
+  aside li a.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+  /* === Main content === */
+  main {
+    background: var(--bg-elev);
+    border-radius: 10px;
+    padding: 32px 40px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    min-width: 0;
+  }
+  main h2 {
+    font-size: 28px;
+    margin: 56px 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--accent);
+    color: var(--accent);
+    font-weight: 800;
+    scroll-margin-top: 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  main h2:first-of-type { margin-top: 0; }
+  main h2 .h2-num {
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  main h3 {
+    font-size: 21px;
+    margin: 36px 0 14px 0;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--accent-soft), transparent);
+    border-left: 4px solid var(--accent);
+    color: var(--text);
+    font-weight: 700;
+    scroll-margin-top: 80px;
+    border-radius: 0 6px 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  main h2 { flex-wrap: wrap; }
+  main h4 {
+    font-size: 17px;
+    margin: 24px 0 10px 0;
+    color: var(--text);
+    font-weight: 700;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 4px;
+    scroll-margin-top: 80px;
+  }
+  main h5 {
+    font-size: 15px;
+    margin: 18px 0 8px 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  main p { margin: 10px 0; }
+  main strong { color: var(--text); font-weight: 700; }
+  main em { font-style: italic; color: var(--text-dim); }
+  main hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 36px 0;
+  }
+  /* === Lists === */
+  main ul, main ol { padding-left: 24px; margin: 10px 0; }
+  main li { margin: 4px 0; }
+  main li > strong:first-child { color: var(--accent); }
+  /* === Code === */
+  code {
+    background: var(--bg-code);
+    color: var(--code-key);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.9em;
+    border: 1px solid var(--border);
+  }
+  pre {
+    background: var(--bg-code);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    margin: 12px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    position: relative;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: inherit;
+  }
+  pre .lang-tag {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--bg-elev);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .copy-btn {
+    position: absolute;
+    top: 6px;
+    right: 60px;
+    font-size: 11px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  pre:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: var(--accent-soft); color: var(--accent); }
+  /* === Tables === */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--bg-elev);
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    background: var(--table-header);
+    font-weight: 700;
+    color: var(--text);
+    position: sticky;
+    top: 0;
+    font-size: 13.5px;
+  }
+  tr:nth-child(even) td { background: var(--table-row-alt); }
+  tr:hover td { background: var(--accent-soft); }
+  /* === Stars === */
+  .star {
+    color: var(--star);
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  /* === Callouts === */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid;
+    background: var(--bg-code);
+    font-size: 14.5px;
+  }
+  .callout.info { border-color: var(--link); background: rgba(88, 166, 255, 0.08); }
+  .callout.warn { border-color: var(--accent); background: var(--accent-soft); }
+  .callout.tip { border-color: var(--code-str); background: rgba(46, 139, 87, 0.08); }
+  .callout-title { font-weight: 700; margin-bottom: 6px; font-size: 13.5px; }
+  .callout.info .callout-title { color: var(--link); }
+  .callout.warn .callout-title { color: var(--accent); }
+  .callout.tip .callout-title { color: var(--code-str); }
+  /* === Section progress checkbox === */
+  .progress-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .progress-check:hover { border-color: var(--accent); }
+  .progress-check input { margin: 0; cursor: pointer; }
+  .progress-check.done { color: var(--check-done); border-color: var(--check-done); }
+  /* === Search highlight === */
+  mark.search-hit {
+    background: var(--highlight);
+    color: var(--text);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  /* === Back to top === */
+  .back-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 50;
+  }
+  .back-top.visible { opacity: 1; pointer-events: auto; }
+  /* === Hamburger menu (mobile) === */
+  .menu-toggle {
+    display: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .menu-toggle:hover { background: var(--accent-soft); }
+  .menu-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 140;
+  }
+  .menu-backdrop.open { display: block; }
+  .sidebar-close {
+    display: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  /* === Responsive === */
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+    aside.sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-height: 100vh;
+      height: 100vh;
+      overflow-y: auto;
+      transform: translateX(-105%);
+      transition: transform 0.25s ease;
+      z-index: 150;
+      box-shadow: 4px 0 16px rgba(0,0,0,0.25);
+      border-radius: 0;
+      border-right: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    aside.sidebar.open { transform: translateX(0); }
+    .sidebar-close { display: block; }
+    main { padding: 20px; }
+    header.topbar { padding: 10px 12px; gap: 10px; }
+    header h1 { font-size: 15px; }
+    header h1 .badge { display: none; }
+    .menu-toggle { display: inline-block; }
+    .search-box { flex: 1; min-width: 0; max-width: none; }
+    .topbar-actions .icon-btn { padding: 6px 8px; font-size: 12px; }
+    .topbar-actions .label-text { display: none; }
+  }
+  @media (max-width: 600px) {
+    main { padding: 16px 14px; font-size: 14.5px; }
+    main h2 { font-size: 22px; }
+    main h3 { font-size: 18px; }
+    pre { font-size: 12.5px; padding: 10px 12px; }
+    table { font-size: 13px; }
+    th, td { padding: 8px 10px; }
+  }
+  /* === Radio Mode === */
+  .radio-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+  }
+  .radio-overlay.open { display: flex; }
+  .radio-toolbar {
+    position: sticky;
+    top: 0;
+    background: var(--bg-elev);
+    border-bottom: 2px solid var(--accent);
+    padding: 12px 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    z-index: 10;
+    box-shadow: var(--shadow);
+  }
+  .radio-toolbar .radio-title {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 15px;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .radio-toolbar button, .radio-toolbar select {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13.5px;
+  }
+  .radio-toolbar button:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .radio-toolbar button.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .radio-toolbar button.primary:hover { opacity: 0.9; background: var(--accent); }
+  .radio-toolbar .rate-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: -4px;
+  }
+  .radio-content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 24px 96px;
+    font-size: 18px;
+    line-height: 2;
+    color: var(--text);
+  }
+  .radio-content h2, .radio-content h3, .radio-content h4 {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    color: var(--text);
+    display: block;
+    margin: 36px 0 14px;
+    font-weight: 700;
+  }
+  .radio-content h2 {
+    font-size: 26px;
+    border-bottom: 2px solid var(--accent) !important;
+    padding-bottom: 8px !important;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .radio-content h3 { font-size: 21px; color: var(--accent); cursor: pointer; }
+  .radio-content h4 { font-size: 18px; color: var(--text); cursor: pointer; }
+  .radio-content h2:hover, .radio-content h3:hover, .radio-content h4:hover {
+    background: var(--accent-soft) !important;
+    border-radius: 4px;
+    padding-left: 8px !important;
+    margin-left: -8px;
+    position: relative;
+  }
+  .radio-content h2:hover::after,
+  .radio-content h3:hover::after,
+  .radio-content h4:hover::after {
+    content: '▶ ここから再生';
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-left: 14px;
+    opacity: 0.85;
+    background: var(--bg-elev);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+  }
+  #radioSection {
+    max-width: 240px;
+    font-size: 12.5px;
+  }
+  .radio-content p, .radio-content li { font-size: 17px; line-height: 1.95; }
+  .radio-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .radio-content th, .radio-content td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    background: var(--bg-elev);
+  }
+  .radio-content th { background: var(--table-header); font-weight: 700; }
+  .radio-content pre {
+    background: var(--bg-code);
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    margin: 12px 0;
+  }
+  .radio-content code {
+    background: var(--bg-code);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--code-key);
+    border: 1px solid var(--border);
+  }
+  .radio-content pre code { background: none; border: none; padding: 0; color: var(--text); }
+  .radio-content .star { color: var(--star); font-weight: 700; }
+  .radio-content .callout {
+    background: var(--bg-code);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 6px;
+  }
+  .radio-content .speaking {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin-left: -16px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .radio-content .toc-summary { display: none; }
+  .radio-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    padding: 8px 16px;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    margin: 0 auto 16px;
+    max-width: 720px;
+  }
+  @media (max-width: 600px) {
+    .radio-toolbar { padding: 10px 12px; gap: 6px; }
+    .radio-toolbar .radio-title { font-size: 13px; width: 100%; margin-bottom: 4px; }
+    .radio-toolbar button, .radio-toolbar select { padding: 6px 10px; font-size: 12.5px; }
+    .radio-content { padding: 20px 16px 80px; font-size: 16px; }
+  }
+  /* === Print === */
+  @media print {
+    header.topbar, aside.sidebar, .back-top, .progress-check, .copy-btn, .menu-toggle, .menu-backdrop, .radio-overlay { display: none !important; }
+    .layout { grid-template-columns: 1fr; padding: 0; }
+    main { box-shadow: none; border: none; padding: 0; }
+    pre { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
+  }
+  /* === Definition box === */
+  .term-def {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  /* Anchor link */
+  .anchor-link {
+    margin-left: 8px;
+    opacity: 0;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.8em;
+    transition: opacity 0.15s;
+  }
+  h2:hover .anchor-link, h3:hover .anchor-link, h4:hover .anchor-link { opacity: 1; }
+  /* TOC summary */
+  .toc-summary {
+    background: linear-gradient(135deg, var(--accent-soft), transparent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .toc-summary h2 {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    border: none;
+    padding: 0;
+  }
+  .toc-summary p { margin: 6px 0; color: var(--text-dim); font-size: 14px; }
+  .keyboard-shortcuts {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .kbd-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .kbd-hint kbd {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<header class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="メニューを開く" title="目次を開く">☰</button>
+  <h1>📘 CCAF 対策<span class="badge">Claude Code 認定試験</span></h1>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="ページ内検索（例: prompt caching, MCP, /init）...">
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn primary-action" id="radioModeBtn" title="ラジオモード (R) — 読み上げ向けのクリーンビューに切り替え">📻 <span class="label-text">ラジオモード</span></button>
+    <button class="icon-btn" id="themeToggle" title="ダークモード切り替え (T)">🌙 <span class="label-text">Dark</span></button>
+    <button class="icon-btn" id="resetProgress" title="進捗リセット">🔄 <span class="label-text">リセット</span></button>
+    <button class="icon-btn" onclick="window.print()" title="印刷">🖨️ <span class="label-text">印刷</span></button>
+  </div>
+</header>
+<div class="menu-backdrop" id="menuBackdrop"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕ 目次を閉じる</button>
+  <h3>📑 目次 / Navigation</h3>
+
+  <div class="nav-section">
+    <div class="section-title">📖 はじめに</div>
+    <ul>
+      <li><a href="#overview">学習ガイド</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-section">
+    <div class="section-title">🔤 用語集 (Vocabulary)</div>
+    <ul>
+      <li><a href="#vocab">用語集トップ</a></li>
+      <li><a href="#vocab-api">API 基礎</a></li>
+      <li><a href="#vocab-prompt">プロンプトエンジニアリング</a></li>
+      <li><a href="#vocab-evals">プロンプト評価 (Evals)</a></li>
+      <li><a href="#vocab-tools">ツール使用</a></li>
+      <li><a href="#vocab-rag">RAG</a></li>
+      <li><a href="#vocab-features">Claude の機能</a></li>
+      <li><a href="#vocab-mcp">MCP 用語</a></li>
+      <li><a href="#vocab-agents">エージェント・ワークフロー</a></li>
+      <li><a href="#vocab-claudecode">Claude Code 用語</a></li>
+      <li><a href="#vocab-misc">その他・汎用</a></li>
+      <li><a href="#vocab-pairs">間違えやすいペア</a></li>
+      <li><a href="#vocab-patterns">頻出コードパターン</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-section">
+    <div class="section-title">① Building with Claude API</div>
+    <ul>
+      <li><a href="#api-s1">§1 API の基礎</a></li>
+      <li><a href="#api-s2">§2 プロンプト評価</a></li>
+      <li><a href="#api-s3">§3 プロンプトエンジニアリング</a></li>
+      <li><a href="#api-s4">§4 ツール使用</a></li>
+      <li><a href="#api-s5">§5 RAG</a></li>
+      <li><a href="#api-s6">§6 Claude の機能</a></li>
+      <li><a href="#api-s7">§7 MCP (API側)</a></li>
+      <li><a href="#api-s8">§8 Claude Code / Apps</a></li>
+      <li><a href="#api-s9">§9 エージェント・ワークフロー</a></li>
+      <li><a href="#api-summary">§ 重要まとめ</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-section">
+    <div class="section-title">② Introduction to MCP</div>
+    <ul>
+      <li><a href="#mcp-intro">MCP とは何か</a></li>
+      <li><a href="#mcp-arch">MCP のアーキテクチャ</a></li>
+      <li><a href="#mcp-transport">トランスポートとメッセージ</a></li>
+      <li><a href="#mcp-primitives">3 つのプリミティブ</a></li>
+      <li><a href="#mcp-server">MCP サーバーの実装</a></li>
+      <li><a href="#mcp-client">MCP クライアントの実装</a></li>
+      <li><a href="#mcp-inspector">サーバーインスペクター</a></li>
+      <li><a href="#mcp-patterns">実践的な統合パターン</a></li>
+      <li><a href="#mcp-summary">MCP まとめ</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-section">
+    <div class="section-title">③ Claude Code in Action</div>
+    <ul>
+      <li><a href="#cc-intro">Claude Code とは</a></li>
+      <li><a href="#cc-mechanism">仕組み</a></li>
+      <li><a href="#cc-install">インストールとセットアップ</a></li>
+      <li><a href="#cc-context">コンテキスト管理</a></li>
+      <li><a href="#cc-changes">変更を加える</a></li>
+      <li><a href="#cc-flow">会話フローの制御</a></li>
+      <li><a href="#cc-custom">カスタムコマンド</a></li>
+      <li><a href="#cc-mcp">MCP サーバーとの統合</a></li>
+      <li><a href="#cc-github">GitHub 統合</a></li>
+      <li><a href="#cc-hooks">フック (Hooks)</a></li>
+      <li><a href="#cc-sdk">Claude Code SDK</a></li>
+      <li><a href="#cc-summary">重要まとめ</a></li>
+    </ul>
+  </div>
+</aside>
+
+<main id="main">
+
+<!-- ========================== INTRO ========================== -->
+<section class="toc-summary" id="overview">
+  <h2>📘 Claude Code 認定試験 — 学習ガイド</h2>
+  <p>このページは <code>CCAF</code> ディレクトリ内の 4 つの学習ノート (<code>vocabulary.md</code> / <code>01_Building_with_Claude_API</code> / <code>02_Introduction_to_MCP</code> / <code>03_Claude_Code_in_Action</code>) を <strong>網羅的に</strong> 1 ページにまとめた試験対策ページです。</p>
+  <p>左サイドバーから章へジャンプ、上部の検索ボックスで用語をフィルタ、各見出しの右の <strong>☐ 学習済</strong> チェックで進捗を記録できます (ブラウザに保存)。</p>
+  <div class="keyboard-shortcuts">
+    <span class="kbd-hint"><kbd>/</kbd> 検索</span>
+    <span class="kbd-hint"><kbd>R</kbd> ラジオモード</span>
+    <span class="kbd-hint"><kbd>T</kbd> ダーク切替</span>
+    <span class="kbd-hint"><kbd>Esc</kbd> 検索クリア / モード解除</span>
+    <span class="kbd-hint"><kbd>G</kbd> → <kbd>T</kbd> トップへ</span>
+  </div>
+  <p style="margin-top:14px;font-size:13.5px;color:var(--text-dim);">
+    📻 <strong>ラジオモード</strong> = ナビ・ボタン類を排除したテキスト専用ビューに切り替え、Web Speech API で日本語読み上げ可能 (再生 / 一時停止 / 速度調整あり)。ながら勉強・歩きながらの復習に最適。
+  </p>
+</section>
+
+<!-- ========================== VOCABULARY ========================== -->
+<h2 id="vocab"><span class="h2-num">用語</span>Claude Code 認定試験 — 英単語・用語集 <span class="anchor-link">#</span></h2>
+<p>試験で出やすい順に構成。<span class="star">★</span> が多いほど頻出・重要。</p>
+
+<h3 id="vocab-api">API 基礎 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>stateless</strong></td><td>ステートレス</td><td>状態を保持しない。Claude API は毎リクエストが独立しており会話履歴を自動保存しない</td></tr>
+<tr><td><span class="star">★★★</span> <strong>conversation history</strong></td><td>-</td><td>会話履歴。マルチターンでは毎回完全な履歴を送る必要がある</td></tr>
+<tr><td><span class="star">★★★</span> <strong>system prompt</strong></td><td>-</td><td>システムプロンプト。Claudeの役割・行動指針を定義する文字列 (<code>system</code> パラメータ)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>max_tokens</strong></td><td>-</td><td>生成する最大トークン数。必須パラメータ</td></tr>
+<tr><td><span class="star">★★★</span> <strong>temperature</strong></td><td>テンパラチャー</td><td>温度。0=確定的、1=創造的。トークンのサンプリング確率を調整</td></tr>
+<tr><td><span class="star">★★★</span> <strong>streaming</strong></td><td>ストリーミング</td><td>レスポンスをチャンクごとにリアルタイム送信する機能</td></tr>
+<tr><td><span class="star">★★</span> <strong>token</strong></td><td>トークン</td><td>テキストの最小単位 (単語や単語の一部)。APIの課金単位</td></tr>
+<tr><td><span class="star">★★</span> <strong>tokenization</strong></td><td>トークナイゼーション</td><td>テキストをトークンに分割する処理</td></tr>
+<tr><td><span class="star">★★</span> <strong>sampling</strong></td><td>サンプリング</td><td>確率分布からトークンを選択するプロセス</td></tr>
+<tr><td><span class="star">★★</span> <strong>prefilling</strong> / <strong>assistant prefill</strong></td><td>プレフィリング</td><td>アシスタントメッセージを事前に入力して出力形式を強制する技法</td></tr>
+<tr><td><span class="star">★★</span> <strong>stop sequences</strong></td><td>-</td><td>生成を停止させる文字列。構造化データ出力に使用</td></tr>
+<tr><td><span class="star">★★</span> <strong>stop_reason</strong></td><td>-</td><td>生成が停止した理由 (<code>end_turn</code>, <code>tool_use</code>, <code>max_tokens</code> など)</td></tr>
+<tr><td><span class="star">★</span> <strong>model ID</strong></td><td>-</td><td>モデルを指定する文字列 (例: <code>claude-sonnet-4-6</code>)</td></tr>
+<tr><td><span class="star">★</span> <strong>message object</strong></td><td>-</td><td><code>{role, content}</code> の形式を持つメッセージオブジェクト</td></tr>
+<tr><td><span class="star">★</span> <strong>content block</strong></td><td>-</td><td>レスポンスのコンテンツブロック (TextBlock, ToolUseBlock など)</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-prompt">プロンプトエンジニアリング <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>prompt engineering</strong></td><td>-</td><td>プロンプトエンジニアリング。より良い結果を得るためのプロンプト設計技術</td></tr>
+<tr><td><span class="star">★★★</span> <strong>few-shot prompting</strong></td><td>フューショット</td><td>複数の入出力例をプロンプトに含める技法</td></tr>
+<tr><td><span class="star">★★★</span> <strong>one-shot prompting</strong></td><td>ワンショット</td><td>1つの例を示す技法</td></tr>
+<tr><td><span class="star">★★★</span> <strong>zero-shot prompting</strong></td><td>ゼロショット</td><td>例なしでタスクを指示する技法</td></tr>
+<tr><td><span class="star">★★★</span> <strong>XML tags</strong></td><td>-</td><td>XMLタグ。プロンプトの構造化に使用 (<code>&lt;instructions&gt;</code>, <code>&lt;document&gt;</code> など)</td></tr>
+<tr><td><span class="star">★★</span> <strong>multishot prompting</strong></td><td>-</td><td>few-shot と同義。複数例を示す</td></tr>
+<tr><td><span class="star">★★</span> <strong>sarcasm</strong></td><td>サーカズム</td><td>皮肉。few-shot でエッジケースをカバーする代表例</td></tr>
+<tr><td><span class="star">★★</span> <strong>chain-of-thought</strong></td><td>CoT</td><td>思考の連鎖。段階的に考えさせるプロンプト技法</td></tr>
+<tr><td><span class="star">★</span> <strong>prompt injection</strong></td><td>-</td><td>外部コンテンツに悪意ある指示を埋め込み、AIを操作する攻撃</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-evals">プロンプト評価 (Evals) <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>eval</strong> / <strong>evaluation</strong></td><td>イーバル</td><td>評価。プロンプトの品質を数値で測定する</td></tr>
+<tr><td><span class="star">★★★</span> <strong>grader</strong></td><td>グレーダー</td><td>採点器。出力の品質を評価するスクリプトや別のClaudeのこと</td></tr>
+<tr><td><span class="star">★★★</span> <strong>model-based grader</strong></td><td>-</td><td>Claudeが別のClaudeの出力を採点するグレーダー</td></tr>
+<tr><td><span class="star">★★★</span> <strong>code-based grader</strong></td><td>-</td><td>Pythonコードで正解と比較するグレーダー</td></tr>
+<tr><td><span class="star">★★</span> <strong>test dataset</strong></td><td>テストデータセット</td><td>評価に使うテスト用の入力例の集合</td></tr>
+<tr><td><span class="star">★★</span> <strong>test case</strong></td><td>テストケース</td><td>個別のテスト入力</td></tr>
+<tr><td><span class="star">★★</span> <strong>baseline</strong></td><td>ベースライン</td><td>比較の基準となる初期プロンプト</td></tr>
+<tr><td><span class="star">★★</span> <strong>prompt versioning</strong></td><td>-</td><td>プロンプトのバージョン管理。新旧スコアを数値で比較</td></tr>
+<tr><td><span class="star">★</span> <strong>ground truth</strong></td><td>グランドトゥルース</td><td>正解データ</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-tools">ツール使用 (Tool Use) <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>tool use</strong></td><td>-</td><td>ツール使用。Claudeが外部システム・APIを呼び出す仕組み</td></tr>
+<tr><td><span class="star">★★★</span> <strong>tool schema</strong></td><td>-</td><td>ツールのJSON Schema定義 (name, description, input_schema)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>JSON Schema</strong></td><td>-</td><td>ツールのパラメータを定義するデータ検証仕様</td></tr>
+<tr><td><span class="star">★★★</span> <strong>tool_use block</strong></td><td>-</td><td>Claudeがツール呼び出しを要求するレスポンスブロック</td></tr>
+<tr><td><span class="star">★★★</span> <strong>tool_result block</strong></td><td>-</td><td>ツールの実行結果をClaudeに返すブロック</td></tr>
+<tr><td><span class="star">★★★</span> <strong>tool_use_id</strong></td><td>-</td><td>ツール呼び出しIDと結果を紐付けるID</td></tr>
+<tr><td><span class="star">★★★</span> <strong>is_error</strong></td><td>-</td><td>tool_resultブロック内のエラーフラグ (<code>True/False</code>)</td></tr>
+<tr><td><span class="star">★★</span> <strong>input_schema</strong></td><td>-</td><td>ツールの入力パラメータのスキーマ定義</td></tr>
+<tr><td><span class="star">★★</span> <strong>tool_choice</strong></td><td>-</td><td>ツール選択制御。<code>auto</code>, <code>any</code>, <code>tool</code>, <code>none</code></td></tr>
+<tr><td><span class="star">★★</span> <strong>text edit tool</strong></td><td>-</td><td>ファイルの差分編集に特化した組み込みツール</td></tr>
+<tr><td><span class="star">★★</span> <strong>web search tool</strong></td><td>-</td><td>Anthropic提供のWeb検索組み込みツール</td></tr>
+<tr><td><span class="star">★</span> <strong>agentic loop</strong></td><td>エージェントループ</td><td><code>stop_reason == "tool_use"</code> の間ループしてツールを実行し続けるパターン</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-rag">RAG (Retrieval Augmented Generation) <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>RAG</strong></td><td>ラグ</td><td>Retrieval Augmented Generation。大きな文書から関連部分だけを検索してClaudeに渡す技術</td></tr>
+<tr><td><span class="star">★★★</span> <strong>chunking</strong></td><td>チャンキング</td><td>大きな文書を小さなテキスト片に分割すること</td></tr>
+<tr><td><span class="star">★★★</span> <strong>embeddings</strong></td><td>エンベディング</td><td>テキストを数値ベクトルに変換したもの。意味的類似度の計算に使用</td></tr>
+<tr><td><span class="star">★★★</span> <strong>vector search</strong> / <strong>semantic search</strong></td><td>ベクトル検索</td><td>埋め込みベクトルの類似度 (コサイン類似度など) で検索する手法</td></tr>
+<tr><td><span class="star">★★★</span> <strong>BM25</strong></td><td>-</td><td>キーワードベースの語彙的検索アルゴリズム。ベクトル検索と組み合わせることが多い</td></tr>
+<tr><td><span class="star">★★</span> <strong>vector database</strong></td><td>ベクトルDB</td><td>埋め込みベクトルを保存・検索するデータベース</td></tr>
+<tr><td><span class="star">★★</span> <strong>cosine similarity</strong></td><td>コサイン類似度</td><td>ベクトル間の類似度を測る指標 (1=完全一致, 0=無関係)</td></tr>
+<tr><td><span class="star">★★</span> <strong>lexical search</strong></td><td>レキシカルサーチ</td><td>語彙的検索。キーワードの完全一致ベースの検索 (BM25など)</td></tr>
+<tr><td><span class="star">★★</span> <strong>multi-index RAG pipeline</strong></td><td>-</td><td>ベクトル検索とBM25を組み合わせた高精度RAGパイプライン</td></tr>
+<tr><td><span class="star">★★</span> <strong>context window</strong></td><td>-</td><td>モデルが一度に処理できるトークン数の上限</td></tr>
+<tr><td><span class="star">★</span> <strong>prompt stuffing</strong></td><td>-</td><td>全文書をそのままプロンプトに入れる (非効率な手法、RAGの対比として登場)</td></tr>
+<tr><td><span class="star">★</span> <strong>rank fusion</strong></td><td>-</td><td>複数の検索結果をスコア統合して最終ランキングを生成する手法</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-features">Claude の機能 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>extended thinking</strong></td><td>-</td><td>拡張思考。最終回答前にClaudeが内部で考えを整理するスクラッチパッド機能</td></tr>
+<tr><td><span class="star">★★★</span> <strong>budget_tokens</strong></td><td>-</td><td>拡張思考に使えるトークン数の上限を指定するパラメータ</td></tr>
+<tr><td><span class="star">★★★</span> <strong>prompt caching</strong></td><td>-</td><td>プロンプトキャッシング。同じコンテンツの再計算をスキップしてコスト・速度を改善</td></tr>
+<tr><td><span class="star">★★★</span> <strong>cache_control</strong></td><td>-</td><td>キャッシュポイントを指定するパラメータ (<code>{"type": "ephemeral"}</code>)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>TTL</strong></td><td>Time To Live</td><td>キャッシュの有効期限。プロンプトキャッシングは <strong>1時間</strong></td></tr>
+<tr><td><span class="star">★★</span> <strong>citations</strong></td><td>サイテーションズ</td><td>引用機能。回答の根拠となる文書箇所を返す</td></tr>
+<tr><td><span class="star">★★</span> <strong>thinking block</strong></td><td>シンキングブロック</td><td>拡張思考のスクラッチパッド内容を含むブロック</td></tr>
+<tr><td><span class="star">★★</span> <strong>Files API</strong></td><td>-</td><td>ファイルを事前アップロードし、リクエストごとに再送しない機能</td></tr>
+<tr><td><span class="star">★★</span> <strong>base64</strong></td><td>ベース64</td><td>画像・PDFをAPI経由で送信するためのエンコード形式</td></tr>
+<tr><td><span class="star">★</span> <strong>feature compatibility</strong></td><td>-</td><td>機能の互換性。拡張思考は温度・プレフィリングと <strong>非互換</strong></td></tr>
+<tr><td><span class="star">★</span> <strong>MIME type</strong></td><td>マイムタイプ</td><td>ファイルの種類を示す識別子 (例: <code>application/pdf</code>, <code>image/jpeg</code>)</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-mcp">MCP (Model Context Protocol) 用語 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>MCP</strong></td><td>-</td><td>Model Context Protocol。Claudeにツール・リソース・プロンプトを提供する通信プロトコル</td></tr>
+<tr><td><span class="star">★★★</span> <strong>MCP server</strong></td><td>-</td><td>ツール・リソース・プロンプトを定義して提供する専門サービス</td></tr>
+<tr><td><span class="star">★★★</span> <strong>MCP client</strong></td><td>-</td><td>MCPサーバーと接続し、Claudeとの橋渡しをするクライアント実装</td></tr>
+<tr><td><span class="star">★★★</span> <strong>tool (MCP primitive)</strong></td><td>-</td><td>MCPの3大プリミティブの1つ。<strong>モデル制御</strong> (Claudeが自律的に呼び出す)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>resource (MCP primitive)</strong></td><td>-</td><td>MCPの3大プリミティブの1つ。<strong>アプリ制御</strong> (アプリがデータを取得してClaudeに渡す)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>prompt (MCP primitive)</strong></td><td>-</td><td>MCPの3大プリミティブの1つ。<strong>ユーザー制御</strong> (事前定義された高品質な指示)</td></tr>
+<tr><td><span class="star">★★★</span> <strong>transport-agnostic</strong></td><td>-</td><td>トランスポートに依存しない。stdio/HTTP/WebSocketなど複数の通信方式をサポート</td></tr>
+<tr><td><span class="star">★★★</span> <strong>stdio</strong></td><td>スタジオ</td><td>Standard Input/Output。ローカルMCPサーバーの最一般的な通信方式</td></tr>
+<tr><td><span class="star">★★★</span> <strong>ListToolsRequest</strong></td><td>-</td><td>クライアントがサーバーに利用可能なツール一覧を問い合わせるメッセージ</td></tr>
+<tr><td><span class="star">★★★</span> <strong>CallToolRequest</strong></td><td>-</td><td>クライアントがサーバーに特定のツールの実行を依頼するメッセージ</td></tr>
+<tr><td><span class="star">★★★</span> <strong>ReadResourceRequest</strong></td><td>-</td><td>クライアントがリソース内容を取得するメッセージ</td></tr>
+<tr><td><span class="star">★★</span> <strong>FastMCP</strong></td><td>-</td><td>Python SDK の MCP サーバー実装クラス (<code>from mcp.server.fastmcp import FastMCP</code>)</td></tr>
+<tr><td><span class="star">★★</span> <strong>@mcp.tool()</strong></td><td>-</td><td>Python SDK でツールを定義するデコレータ</td></tr>
+<tr><td><span class="star">★★</span> <strong>@mcp.resource()</strong></td><td>-</td><td>Python SDK でリソースを定義するデコレータ</td></tr>
+<tr><td><span class="star">★★</span> <strong>@mcp.prompt()</strong></td><td>-</td><td>Python SDK でプロンプトを定義するデコレータ</td></tr>
+<tr><td><span class="star">★★</span> <strong>Field()</strong></td><td>フィールド</td><td>Pydanticの型、MCPでパラメータの説明を付けるために使用</td></tr>
+<tr><td><span class="star">★★</span> <strong>direct resource</strong></td><td>-</td><td>固定URIを持つ静的リソース (例: <code>docs://list</code>)</td></tr>
+<tr><td><span class="star">★★</span> <strong>templated resource</strong></td><td>-</td><td>パラメータを持つ動的リソース (例: <code>docs://{doc_id}</code>)</td></tr>
+<tr><td><span class="star">★★</span> <strong>ClientSession</strong></td><td>-</td><td>MCP Python SDK の実際の接続オブジェクト</td></tr>
+<tr><td><span class="star">★★</span> <strong>MCP Server Inspector</strong></td><td>-</td><td><code>mcp dev server.py</code> で起動するブラウザベースのデバッグUI</td></tr>
+<tr><td><span class="star">★</span> <strong>context injection</strong></td><td>-</td><td>リソース内容を自動的にプロンプトに埋め込む技法</td></tr>
+<tr><td><span class="star">★</span> <strong>autocomplete</strong></td><td>-</td><td>オートコンプリート。リソース一覧をUIに表示する活用例</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-agents">エージェントとワークフロー <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>agent</strong></td><td>エージェント</td><td>タスクを自律的に完了するシステム。手順が不明・動的な場合に使用</td></tr>
+<tr><td><span class="star">★★★</span> <strong>workflow</strong></td><td>ワークフロー</td><td>手順が明確な場合に使う構造化されたパイプライン</td></tr>
+<tr><td><span class="star">★★★</span> <strong>parallelization workflow</strong></td><td>-</td><td>並列化ワークフロー。独立したサブタスクを同時実行して集約</td></tr>
+<tr><td><span class="star">★★★</span> <strong>chaining workflow</strong></td><td>-</td><td>チェーニングワークフロー。前ステップの出力を次ステップの入力にする逐次処理</td></tr>
+<tr><td><span class="star">★★★</span> <strong>routing workflow</strong></td><td>-</td><td>ルーティングワークフロー。入力を分類して専門パイプラインに振り分ける</td></tr>
+<tr><td><span class="star">★★</span> <strong>environment inspection</strong></td><td>-</td><td>エージェントが作業前に環境 (ファイル、状態) を調べること</td></tr>
+<tr><td><span class="star">★★</span> <strong>subagent</strong></td><td>サブエージェント</td><td>親エージェントから呼び出される子エージェント</td></tr>
+<tr><td><span class="star">★</span> <strong>orchestration</strong></td><td>オーケストレーション</td><td>複数のエージェント/ワークフローを調整・管理すること</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-claudecode">Claude Code 用語 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>CLAUDE.md</strong></td><td>クロードエムディー</td><td>プロジェクト固有の情報をClaudeに伝えるファイル。<code>/init</code> で自動生成</td></tr>
+<tr><td><span class="star">★★★</span> <strong>/init</strong></td><td>-</td><td>プロジェクトを分析してCLAUDE.mdを生成するコマンド</td></tr>
+<tr><td><span class="star">★★★</span> <strong>hook</strong></td><td>フック</td><td>ツール実行の前後にカスタムコマンドを実行する仕組み</td></tr>
+<tr><td><span class="star">★★★</span> <strong>PreToolUse</strong></td><td>-</td><td>ツール実行 <strong>前</strong> のフック。exit 2でツールをブロックできる</td></tr>
+<tr><td><span class="star">★★★</span> <strong>PostToolUse</strong></td><td>-</td><td>ツール実行 <strong>後</strong> のフック。フォーマット・テスト実行などに使用</td></tr>
+<tr><td><span class="star">★★★</span> <strong>exit code 2</strong></td><td>-</td><td>PreToolUseフックでツール呼び出しをブロックするための終了コード</td></tr>
+<tr><td><span class="star">★★★</span> <strong>Claude Code SDK</strong></td><td>-</td><td><code>@anthropic-ai/claude-agent-sdk</code>。Claude Codeをプログラムから呼び出すライブラリ</td></tr>
+<tr><td><span class="star">★★★</span> <strong>query()</strong></td><td>-</td><td>Claude Code SDKのメイン関数。<code>for await (const msg of query({prompt}))</code> で使用</td></tr>
+<tr><td><span class="star">★★</span> <strong>/compact</strong></td><td>-</td><td>会話履歴を要約圧縮するコマンド</td></tr>
+<tr><td><span class="star">★★</span> <strong>/clear</strong></td><td>-</td><td>新しい会話を開始するコマンド (履歴は削除しない)</td></tr>
+<tr><td><span class="star">★★</span> <strong>/resume</strong></td><td>-</td><td>以前の会話を再開するコマンド</td></tr>
+<tr><td><span class="star">★★</span> <strong>/effort</strong></td><td>-</td><td>推論深度を調整するコマンド (<code>/effort high</code> など)</td></tr>
+<tr><td><span class="star">★★</span> <strong>custom commands</strong></td><td>-</td><td><code>.claude/commands/*.md</code> で定義するプロジェクト固有のスラッシュコマンド</td></tr>
+<tr><td><span class="star">★★</span> <strong>$ARGUMENTS</strong></td><td>-</td><td>カスタムコマンドで引数を受け取るプレースホルダー</td></tr>
+<tr><td><span class="star">★★</span> <strong>allowedTools</strong></td><td>-</td><td>使用を許可するツールを限定するオプション</td></tr>
+<tr><td><span class="star">★★</span> <strong>/install-github-app</strong></td><td>-</td><td>GitHub 統合をセットアップするコマンド</td></tr>
+<tr><td><span class="star">★★</span> <strong>@claude</strong></td><td>-</td><td>GitHub Issues/PRでClaudeを呼び出すメンション</td></tr>
+<tr><td><span class="star">★★</span> <strong>Stop hook</strong></td><td>-</td><td>Claudeの応答完了時に実行されるフック</td></tr>
+<tr><td><span class="star">★★</span> <strong>UserPromptSubmit hook</strong></td><td>-</td><td>ユーザーがプロンプトを送信した直後に実行されるフック</td></tr>
+<tr><td><span class="star">★</span> <strong>settings.local.json</strong></td><td>-</td><td>フックを定義するClause Codeの設定ファイル</td></tr>
+<tr><td><span class="star">★</span> <strong>$PWD</strong></td><td>-</td><td>カレントディレクトリの絶対パス。フック設定で相対パスを避けるために使用</td></tr>
+<tr><td><span class="star">★</span> <strong>tsc --noEmit</strong></td><td>-</td><td>TypeScriptのコンパイルチェック (出力ファイルを生成しない)。フックで型エラー検出に使用</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-misc">その他・汎用用語 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>英単語 / フレーズ</th><th>読み方・略称</th><th>日本語訳・説明</th></tr></thead>
+<tbody>
+<tr><td><span class="star">★★★</span> <strong>API key</strong></td><td>-</td><td>APIキー。<code>ANTHROPIC_API_KEY</code> 環境変数で設定。コードにハードコードしてはいけない</td></tr>
+<tr><td><span class="star">★★★</span> <strong>environment variable</strong></td><td>-</td><td>環境変数。機密情報を安全に管理する手段</td></tr>
+<tr><td><span class="star">★★★</span> <strong>.env file</strong></td><td>ドットエンブ</td><td>環境変数を保存するファイル。gitにコミットしてはいけない</td></tr>
+<tr><td><span class="star">★★</span> <strong>latency</strong></td><td>レイテンシー</td><td>応答遅延。プロンプトキャッシングで改善できる</td></tr>
+<tr><td><span class="star">★★</span> <strong>context window</strong></td><td>-</td><td>モデルが一度に処理できる最大トークン数</td></tr>
+<tr><td><span class="star">★★</span> <strong>multimodal</strong></td><td>マルチモーダル</td><td>複数の入力形式 (テキスト・画像・PDFなど) を扱える能力</td></tr>
+<tr><td><span class="star">★★</span> <strong>sandbox</strong></td><td>サンドボックス</td><td>隔離された安全な実行環境</td></tr>
+<tr><td><span class="star">★</span> <strong>async / await</strong></td><td>-</td><td>非同期処理。MCPクライアント実装で多用</td></tr>
+<tr><td><span class="star">★</span> <strong>decorator</strong></td><td>デコレータ</td><td>Pythonの <code>@</code> 構文。MCPでツール・リソース・プロンプトを登録するために使用</td></tr>
+<tr><td><span class="star">★</span> <strong>JSON</strong></td><td>ジェイソン</td><td>JavaScript Object Notation。API通信・ツールスキーマ定義に使用</td></tr>
+<tr><td><span class="star">★</span> <strong>schema</strong></td><td>スキーマ</td><td>データ構造の定義</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-pairs">間違えやすいペア <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>用語A</th><th>用語B</th><th>違い</th></tr></thead>
+<tbody>
+<tr><td><strong>stateless</strong> (API)</td><td><strong>session</strong> (会話)</td><td>APIは状態を持たない。セッション感はアプリが履歴を送ることで実現する</td></tr>
+<tr><td><strong>tool (MCP)</strong></td><td><strong>tool use (API)</strong></td><td>MCPツール=定義済みの機能を提供。ツール使用=Claudeが呼び出す仕組み</td></tr>
+<tr><td><strong>workflow</strong></td><td><strong>agent</strong></td><td>workflow=手順が決まっている。agent=手順をClaudeが自律決定</td></tr>
+<tr><td><strong>PreToolUse</strong></td><td><strong>PostToolUse</strong></td><td>Pre=前 (ブロック可)。Post=後 (フィードバック)</td></tr>
+<tr><td><strong>temperature=0</strong></td><td><strong>temperature=1</strong></td><td>0=確定的・一貫性。1=創造的・多様</td></tr>
+<tr><td><strong>@mcp.tool()</strong></td><td><strong>@mcp.resource()</strong></td><td>tool=モデルが使う。resource=アプリが取得する</td></tr>
+<tr><td><strong>/compact</strong></td><td><strong>/clear</strong></td><td>compact=圧縮 (コンテキスト保持)。clear=完全リセット</td></tr>
+<tr><td><strong>exit code 0</strong></td><td><strong>exit code 2</strong></td><td>0=許可。2=ブロック (PreToolUseのみ)</td></tr>
+<tr><td><strong>budget_tokens</strong></td><td><strong>max_tokens</strong></td><td>budget_tokens=拡張思考の上限。max_tokens=全体の生成上限</td></tr>
+</tbody></table></div>
+
+<h3 id="vocab-patterns">よく出るコードパターン <span class="anchor-link">#</span></h3>
+
+<h4>API リクエストの基本形</h4>
+<pre><span class="lang-tag">python</span><code>client.messages.create(model=..., max_tokens=..., messages=[...])</code></pre>
+
+<h4>ツール使用の判定</h4>
+<pre><span class="lang-tag">python</span><code>if response.stop_reason == "tool_use":</code></pre>
+
+<h4>プロンプトキャッシングのマーク</h4>
+<pre><span class="lang-tag">python</span><code>{"type": "text", "text": ..., "cache_control": {"type": "ephemeral"}}</code></pre>
+
+<h4>フックのブロック</h4>
+<pre><span class="lang-tag">javascript</span><code>process.exit(2);  // ブロック
+process.exit(0);  // 許可</code></pre>
+
+<h4>Claude Code SDKの使用</h4>
+<pre><span class="lang-tag">javascript</span><code>for await (const message of query({ prompt })) { ... }</code></pre>
+
+<h4>MCP ツール定義</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.tool()
+def my_tool(param: str = Field(description="...")) -&gt; str:</code></pre>
+
+<div class="callout tip">
+<div class="callout-title">💡 学習Tip</div>
+わからない用語が出てきたらこの用語集に立ち戻ってください。<span class="star">★★★</span> は最頻出、必ず暗記すること。
+</div>
+
+<!-- ========================== ① BUILDING WITH CLAUDE API ========================== -->
+<h2 id="api-s1"><span class="h2-num">①-1</span>Building with Claude API — セクション1: API の基礎 <span class="anchor-link">#</span></h2>
+
+<h3>Claude モデルファミリー <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>モデル</th><th>特徴</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>Claude Opus</td><td>最高の知性・推論力</td><td>複雑なタスク、研究、分析</td></tr>
+<tr><td>Claude Sonnet</td><td>バランス重視 (速度・性能)</td><td>本番アプリ、コーディング</td></tr>
+<tr><td>Claude Haiku</td><td>最速・最低コスト</td><td>軽量エージェント、頻繁呼び出し</td></tr>
+</tbody></table></div>
+<ul>
+  <li>モデルIDは <code>claude-opus-4-7</code>, <code>claude-sonnet-4-6</code>, <code>claude-haiku-4-5-20251001</code> など</li>
+  <li>最新モデルを使用するのが原則</li>
+</ul>
+
+<h3>API リクエストのライフサイクル (5ステップ) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">flow</span><code>① クライアント → サーバー (あなたのアプリ)
+② サーバー → Anthropic API (APIキーで認証)
+③ Anthropic でモデル処理 (トークナイズ→埋め込み→文脈化→生成)
+④ Anthropic API → サーバー (レスポンス返却)
+⑤ サーバー → クライアント (生成テキストを表示)</code></pre>
+
+<div class="callout warn">
+<div class="callout-title">⚠️ なぜ直接クライアントから呼んではいけないか</div>
+APIキーがクライアントコードに露出すると第三者に悪用される → 必ずサーバー経由。
+</div>
+
+<h4>Claude の内部処理 4 ステップ</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>ステップ</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td><strong>Tokenization</strong></td><td>入力テキストをトークン (単語の一部など) に分割</td></tr>
+<tr><td><strong>Embedding</strong></td><td>各トークンを意味の数値ベクトル (embedding) に変換</td></tr>
+<tr><td><strong>Contextualization</strong></td><td>周辺語に基づいて各 embedding を文脈に合わせて調整</td></tr>
+<tr><td><strong>Generation</strong></td><td>次のトークンの確率分布から選んで生成 (max_tokens / stop_sequence で終了)</td></tr>
+</tbody></table></div>
+<p><strong>生成終了条件:</strong> max_tokens 到達 / end-of-sequence トークン生成 / stop_sequence に到達</p>
+
+<h3>API へのアクセスと認証 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code># パッケージインストール
+%pip install anthropic python-dotenv
+
+# .env ファイルに API キーを保存 (コードに直接書かない)
+ANTHROPIC_API_KEY="sk-ant-..."
+
+# Python での初期化
+import anthropic
+from dotenv import load_dotenv
+load_dotenv()
+
+client = anthropic.Anthropic()  # 環境変数から自動読み込み</code></pre>
+
+<h4>API キーの取得手順 (console.anthropic.com)</h4>
+<ol>
+  <li>console.anthropic.com にアクセス</li>
+  <li>ダッシュボード右上の「Get API Keys」をクリック</li>
+  <li>「Create Key」をクリック</li>
+  <li>ワークスペース・名前を設定して作成</li>
+  <li>キーを安全な場所に保存 (一度しか表示されない)</li>
+</ol>
+
+<h3>リクエストの作成 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "量子コンピュータを1文で説明してください"}
+    ]
+)
+
+# レスポンスのテキスト取得
+print(message.content[0].text)</code></pre>
+<p><strong>重要なパラメータ:</strong></p>
+<ul>
+  <li><code>model</code>: 使用するモデルID</li>
+  <li><code>max_tokens</code>: 生成する最大トークン数 (必須)</li>
+  <li><code>messages</code>: 会話履歴の配列</li>
+</ul>
+<p><strong>レスポンスに含まれるもの:</strong> 生成テキスト (content)、トークン使用量 (usage)、終了理由 (stop_reason)</p>
+
+<h3>マルチターン会話 <span class="anchor-link">#</span></h3>
+<div class="callout info">
+<div class="callout-title">📌 ポイント: Claude API はステートレス</div>
+<ul style="margin:0">
+  <li>Claude はリクエスト間で会話履歴を保持しない</li>
+  <li>毎回のリクエストに <strong>完全な会話履歴</strong> を送る必要がある</li>
+</ul>
+</div>
+<pre><span class="lang-tag">python</span><code>messages = []
+
+def add_user_message(messages, text):
+    messages.append({"role": "user", "content": text})
+    return messages
+
+def add_assistant_message(messages, text):
+    messages.append({"role": "assistant", "content": text})
+    return messages
+
+def chat(messages):
+    response = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        messages=messages
+    )
+    return response.content[0].text
+
+# 会話フロー
+messages = add_user_message(messages, "こんにちは！")
+reply = chat(messages)
+messages = add_assistant_message(messages, reply)
+messages = add_user_message(messages, "続けて教えてください")
+reply2 = chat(messages)</code></pre>
+
+<h3>システムプロンプト <span class="anchor-link">#</span></h3>
+<ul>
+  <li>Claude の <strong>役割・行動指針</strong> を定義する文字列</li>
+  <li><code>create()</code> の <code>system</code> パラメータに渡す</li>
+</ul>
+<pre><span class="lang-tag">python</span><code>message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system="あなたは数学の家庭教師です。答えを直接教えず、ヒントを与えてください。",
+    messages=[{"role": "user", "content": "2次方程式の解き方は？"}]
+)</code></pre>
+<p><strong>システムプロンプトの用途:</strong></p>
+<ul>
+  <li>キャラクター・ペルソナの設定</li>
+  <li>回答フォーマットの指定</li>
+  <li>行動制約の設定 (「簡潔に答える」「日本語のみ」など)</li>
+</ul>
+
+<h3>温度 (Temperature) <span class="anchor-link">#</span></h3>
+<p>Claude のテキスト生成はトークンの確率分布からサンプリングする仕組み。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>温度</th><th>挙動</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>0.0</td><td>確定的・一貫性が高い</td><td>事実確認、コード生成</td></tr>
+<tr><td>0.5〜0.7</td><td>バランス</td><td>一般的な質問応答</td></tr>
+<tr><td>1.0</td><td>創造的・多様</td><td>ブレインストーミング、創作</td></tr>
+</tbody></table></div>
+<pre><span class="lang-tag">python</span><code>response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    temperature=0.0,   # 低温度 → 一貫した回答
+    messages=[{"role": "user", "content": "映画のアイデアを教えて"}]
+)</code></pre>
+<ul>
+  <li>温度が高くても同じ回答が出ることはある (確率を変えるだけ)</li>
+  <li>拡張思考 (Extended Thinking) とは <strong>互換性なし</strong></li>
+</ul>
+
+<h3>レスポンスストリーミング <span class="anchor-link">#</span></h3>
+<p>大きなレスポンスを <strong>チャンクごとにリアルタイム送信</strong> することでUXを改善。</p>
+<pre><span class="lang-tag">python</span><code>with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=1000,
+    messages=messages
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)  # チャンクをリアルタイム送信
+
+    # 完全なメッセージオブジェクトを取得 (DB保存用など)
+    final_message = stream.get_final_message()</code></pre>
+<ul>
+  <li>応答が10〜30秒かかる場合にUXが大幅に改善</li>
+  <li><code>stream.text_stream</code>: テキストチャンクのイテレータ</li>
+  <li><code>stream.get_final_message()</code>: 完全なレスポンスオブジェクト</li>
+</ul>
+
+<h3>構造化データの出力 <span class="anchor-link">#</span></h3>
+<p>Claude にJSONやコードなどを <strong>説明文なしで</strong> 出力させる技法。</p>
+<p><strong>テクニック:</strong> アシスタントメッセージの事前入力 (Prefilling) + ストップシーケンス</p>
+<pre><span class="lang-tag">python</span><code># JSON出力の例
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "ユーザー情報をJSONで生成してください"},
+        {"role": "assistant", "content": "{"}  # アシスタントメッセージを事前入力
+    ],
+    stop_sequences=["}"]  # JSONの終わりで停止
+)
+
+# クリーンなJSONを取得
+import json
+clean_json = json.loads(("{" + response.content[0].text + "}").strip())</code></pre>
+<p><strong>応用:</strong></p>
+<ul>
+  <li>Pythonコードなら <code>```python</code> で開始・終了</li>
+  <li>箇条書きリスト、CSV など構造化コンテンツ全般に使える</li>
+</ul>
+
+<h2 id="api-s2"><span class="h2-num">①-2</span>セクション2: プロンプト評価 (Evals) <span class="anchor-link">#</span></h2>
+
+<h3>プロンプト評価とは <span class="anchor-link">#</span></h3>
+<p>プロンプトを <strong>数値的に測定</strong> してシステマチックに改善するアプローチ。</p>
+<ul>
+  <li><strong>プロンプトエンジニアリング</strong>: 良いプロンプトを書く技術</li>
+  <li><strong>プロンプト評価</strong>: プロンプトの品質を客観的に測定する技術</li>
+</ul>
+
+<h3>典型的な評価ワークフロー (5ステップ) <span class="anchor-link">#</span></h3>
+<ol>
+  <li><strong>プロンプトを下書き</strong> (初期バージョンを作成)</li>
+  <li><strong>テストデータセットを作成</strong> (代表的な入力例を用意)</li>
+  <li><strong>Claude をデータセットで実行</strong> (全テストケースで出力生成)</li>
+  <li><strong>出力を採点</strong> (グレーダーで評価)</li>
+  <li><strong>スコアで比較</strong> (プロンプトバージョン間の優劣を数値で判断)</li>
+</ol>
+
+<h3>テストデータセットの生成 <span class="anchor-link">#</span></h3>
+<p>Claude 自身でテストケースを生成できる。<code>generate_dataset()</code> はデータセット仕様を渡すと Claude がテストケースを自動生成し、prefilling + stop_sequences で JSON をパースして返す。</p>
+<pre><span class="lang-tag">python</span><code>dataset = evaluator.generate_dataset(
+    task_description="Write a compact 1 day meal plan for an athlete",
+    prompt_inputs_spec={
+        "height": "Athlete's height in cm",
+        "weight": "Athlete's weight in kg",
+        "goal": "Goal of the athlete",
+        "restrictions": "Dietary restrictions"
+    },
+    output_file="dataset.json",
+    num_cases=3  # 開発中は少数に留める
+)</code></pre>
+
+<h3>評価の実行 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>results = evaluator.run_evaluation(
+    run_prompt_function=run_prompt,
+    dataset_file="dataset.json",
+    extra_criteria="""
+    The output should include:
+    - Daily caloric total
+    - Macronutrient breakdown
+    - Meals with exact foods, portions, and timing
+    """
+)</code></pre>
+
+<h3>グレーダーの種類 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>グレーダー</th><th>説明</th><th>適用例</th></tr></thead>
+<tbody>
+<tr><td><strong>コードベースグレーダー</strong></td><td>Pythonで文法・形式を検証</td><td>JSON/Python/Regex の構文チェック</td></tr>
+<tr><td><strong>モデルベースグレーダー</strong></td><td>Claude が 1〜10 で採点</td><td>主観的品質評価 (完全性・役立ち度)</td></tr>
+<tr><td><strong>人間グレーダー</strong></td><td>人が手動でレビュー</td><td>総合品質・深さ・簡潔さ (最も柔軟だが時間かかる)</td></tr>
+</tbody></table></div>
+
+<h3>モデルベースグレーダーの実装 <span class="anchor-link">#</span></h3>
+<p>スコアだけを聞くと中間値 (6点前後) に偏る → <strong>強み・弱み・推論</strong> も一緒に求めると精度が上がる。</p>
+<pre><span class="lang-tag">python</span><code>def grade_by_model(test_case, output):
+    eval_prompt = """
+You are an expert code reviewer. Evaluate this AI-generated solution.
+Task: {task}
+Solution: {solution}
+Provide your evaluation as a structured JSON object with:
+- "strengths": An array of 1-3 key strengths
+- "weaknesses": An array of 1-3 key areas for improvement
+- "reasoning": A concise explanation of your assessment
+- "score": A number between 1-10
+"""
+    messages = []
+    add_user_message(messages, eval_prompt)
+    add_assistant_message(messages, "```json")   # prefilling
+    eval_text = chat(messages, stop_sequences=["```"])
+    return json.loads(eval_text)</code></pre>
+
+<h3>コードベースグレーダーの実装 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>def validate_json(text):
+    try:
+        json.loads(text.strip())
+        return 10
+    except json.JSONDecodeError:
+        return 0
+
+def validate_python(text):
+    try:
+        ast.parse(text.strip())
+        return 10
+    except SyntaxError:
+        return 0
+
+def validate_regex(text):
+    try:
+        re.compile(text.strip())
+        return 10
+    except re.error:
+        return 0
+
+# モデルスコアとコードスコアを平均
+score = (model_score + syntax_score) / 2</code></pre>
+<p>テストケースには期待する出力形式 (<code>"format": "python"</code> など) を含め、グレーダーが正しいバリデーター関数を選べるようにする。</p>
+<p>コード出力をクリーンにするためのプレフィリング例:</p>
+<pre><span class="lang-tag">python</span><code>add_assistant_message(messages, "```code")  # Python/JSON/Regex を問わず使える</code></pre>
+
+<h2 id="api-s3"><span class="h2-num">①-3</span>セクション3: プロンプトエンジニアリング技法 <span class="anchor-link">#</span></h2>
+
+<h3>プロンプトエンジニアリングの反復サイクル <span class="anchor-link">#</span></h3>
+<ol>
+  <li>ゴールを設定</li>
+  <li>初期プロンプトを作成</li>
+  <li>評価 (スコア確認)</li>
+  <li>プロンプトエンジニアリング技法を適用</li>
+  <li>再評価して改善を確認</li>
+</ol>
+<p>→ 3〜5 を繰り返す。最初のスコアが 2〜3 / 10 でも正常。改善を追跡することが目的。</p>
+
+<h3>1. 明確・直接的に書く <span class="anchor-link">#</span></h3>
+<ul>
+  <li>プロンプトの <strong>最初の行が最重要</strong></li>
+  <li>曖昧な表現を避け、シンプルな言葉でタスクを明示</li>
+  <li>悪い例: 「例の件について色々と...」</li>
+  <li>良い例: 「以下の製品説明を50文字以内で要約してください」</li>
+</ul>
+
+<h3>2. 具体的に書く (2種類のガイドライン) <span class="anchor-link">#</span></h3>
+<h4>① 出力品質ガイドライン</h4>
+<p>出力が持つべき性質をリスト: 長さ・フォーマット・含むべき要素・トーン</p>
+<pre><span class="lang-tag">text</span><code>Guidelines:
+1. Include accurate daily calorie amount
+2. Show protein, fat, and carb amounts
+3. Specify when to eat each meal
+4. Use only foods that fit restrictions
+5. List all portion sizes in grams</code></pre>
+<p>→ スコアが 3.92 → 7.86 に向上した事例あり (品質ガイドライン追加のみで 2倍以上改善)。</p>
+<h4>② プロセスステップ</h4>
+<p>問題をどう考えるかの手順を指示:</p>
+<ul>
+  <li>複雑な問題・意思決定・批判的思考に有効</li>
+  <li>Claude が複数の観点を検討してから回答するよう誘導</li>
+</ul>
+<pre><span class="lang-tag">text</span><code>1. Brainstorm three talents that would create dramatic tension
+2. Pick the most interesting talent
+3. Outline a pivotal scene that reveals the talent</code></pre>
+
+<h3>3. XML タグで構造化 <span class="anchor-link">#</span></h3>
+<p>大量コンテンツを含むプロンプトに特に有効。</p>
+<pre><span class="lang-tag">xml</span><code>&lt;instructions&gt;
+以下の売上記録を分析して、月別トップ3商品を特定してください。
+&lt;/instructions&gt;
+
+&lt;sales_records&gt;
+{sales_data}
+&lt;/sales_records&gt;
+
+&lt;output_format&gt;
+JSON形式でresult配列として返してください。
+&lt;/output_format&gt;</code></pre>
+<p><strong>利点:</strong></p>
+<ul>
+  <li>Claude が指示とデータを明確に区別できる</li>
+  <li>複数のデータソースを扱うときに特に有効</li>
+</ul>
+
+<h3>4. 例を提供する (Few-Shot Prompting) <span class="anchor-link">#</span></h3>
+<ul>
+  <li><strong>ゼロショット</strong>: 例なしで直接指示</li>
+  <li><strong>ワンショット</strong>: 例を1つ提供</li>
+  <li><strong>マルチショット</strong>: 複数の例を提供 (最も効果的)</li>
+</ul>
+<pre><span class="lang-tag">python</span><code>prompt = """
+以下の例を参考に感情分析を行ってください:
+
+入力: "今日の映画は最高だった！"
+出力: positive
+
+入力: "最悪な一日だった..."
+出力: negative
+
+入力: "まあまあかな"
+出力: neutral
+
+入力: "{user_tweet}"
+出力:"""</code></pre>
+<ul>
+  <li><strong>皮肉や文脈依存</strong> の判断に特に効果的</li>
+  <li>例はエッジケースをカバーするよう選ぶ</li>
+</ul>
+
+<h2 id="api-s4"><span class="h2-num">①-4</span>セクション4: ツール使用 (Tool Use) <span class="anchor-link">#</span></h2>
+
+<h3>ツール使用とは <span class="anchor-link">#</span></h3>
+<p>Claude のトレーニングデータに含まれない <strong>最新情報や外部システム</strong> にアクセスさせる仕組み。</p>
+<p><strong>なぜ必要か:</strong> Claude は訓練時のデータしか知らず、リアルタイムデータ (天気、株価、DB など) にアクセスできない。</p>
+<p><strong>ツール使用の基本フロー:</strong></p>
+<ol>
+  <li>ツールスキーマ (JSON Schema) を Claude に渡す</li>
+  <li>Claude がツール呼び出しを要求</li>
+  <li>アプリケーションがツールを実行</li>
+  <li>結果を Claude に返す</li>
+  <li>Claude が最終回答を生成</li>
+</ol>
+
+<h3>プロジェクト例: リマインダーシステム <span class="anchor-link">#</span></h3>
+<p>Claude の3つの限界をツールで補う:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>問題</th><th>解決ツール</th></tr></thead>
+<tbody>
+<tr><td>正確な現在時刻を知らない</td><td><code>get_current_datetime</code></td></tr>
+<tr><td>日付計算が不正確</td><td><code>add_duration_to_datetime</code></td></tr>
+<tr><td>リマインダー設定機能がない</td><td><code>set_reminder</code></td></tr>
+</tbody></table></div>
+<p>→ ツールは「Claude にできないことをツールで補う」という原則の実例。</p>
+
+<h3>ツールスキーマ (JSON Schema) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>get_weather_schema = {
+    "name": "get_weather",
+    "description": "指定した都市の現在の天気情報を取得します",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "city": {
+                "type": "string",
+                "description": "天気を取得する都市名 (例: Tokyo)"
+            },
+            "unit": {
+                "type": "string",
+                "enum": ["celsius", "fahrenheit"],
+                "description": "温度の単位"
+            }
+        },
+        "required": ["city"]
+    }
+}</code></pre>
+<p><strong>JSON Schemaの3要素:</strong></p>
+<ul>
+  <li><code>name</code>: ツールの名前 (関数名)</li>
+  <li><code>description</code>: 何をするツールか (Claude がいつ使うか判断するための説明)</li>
+  <li><code>input_schema</code>: パラメータの型・説明・必須項目</li>
+</ul>
+
+<h3>ツール関数のベストプラクティス <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>def get_current_datetime(date_format="%Y-%m-%d %H:%M:%S"):
+    if not date_format:
+        raise ValueError("date_format cannot be empty")
+    return datetime.now().strftime(date_format)</code></pre>
+<ul>
+  <li><strong>わかりやすい名前</strong>: 関数名・パラメータ名で目的を明示</li>
+  <li><strong>入力のバリデーション</strong>: 必須パラメータが空でないか確認</li>
+  <li><strong>明確なエラーメッセージ</strong>: Claude はエラーを見て修正した引数で再試行できる</li>
+</ul>
+
+<h3>ツール呼び出しのリクエスト <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=[get_weather_schema],
+    messages=[{"role": "user", "content": "東京の天気は？"}]
+)</code></pre>
+
+<h3>レスポンスのメッセージブロック <span class="anchor-link">#</span></h3>
+<p>ツール使用が有効な場合、レスポンスは <strong>複数のブロック</strong> を持つ:</p>
+<pre><span class="lang-tag">python</span><code># レスポンスの構造例
+response.content = [
+    TextBlock(type="text", text="東京の天気を確認します"),
+    ToolUseBlock(
+        type="tool_use",
+        id="toolu_01...",
+        name="get_weather",
+        input={"city": "Tokyo", "unit": "celsius"}
+    )
+]
+
+# stop_reason が "tool_use" の場合はツール呼び出しが必要
+if response.stop_reason == "tool_use":
+    tool_use = next(b for b in response.content if b.type == "tool_use")
+    # ツールを実行
+    result = get_weather(**tool_use.input)</code></pre>
+
+<h3>ツール結果の送信 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code># ツール結果を会話に追加
+messages.append({
+    "role": "user",
+    "content": [{
+        "type": "tool_result",
+        "tool_use_id": tool_use.id,  # ツール呼び出しIDと一致させる
+        "content": "東京: 25°C、晴れ",
+        "is_error": False  # エラーの場合は True
+    }]
+})
+
+# 再度リクエスト (ツールスキーマも必ず含める)
+final_response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=[get_weather_schema],  # ← 必ず再度含める
+    messages=messages
+)</code></pre>
+<div class="callout warn">
+<div class="callout-title">⚠️ 重要</div>
+フォローアップリクエストでも <code>tools</code> パラメータを含めること。
+</div>
+
+<h3>マルチターン・マルチツール会話ループ <span class="anchor-link">#</span></h3>
+<p>複数ツールを連続で呼ぶ場合のループパターン:</p>
+<pre><span class="lang-tag">python</span><code>from anthropic.types import Message
+
+def add_user_message(messages, message):
+    user_message = {
+        "role": "user",
+        "content": message.content if isinstance(message, Message) else message
+    }
+    messages.append(user_message)
+
+def text_from_message(message):
+    return "\n".join([block.text for block in message.content if block.type == "text"])
+
+def run_conversation(messages):
+    while True:
+        response = chat(messages, tools=[...])
+        add_assistant_message(messages, response)
+        if response.stop_reason != "tool_use":
+            break
+        tool_result_blocks = run_tools(response)
+        add_user_message(messages, tool_result_blocks)
+    return messages</code></pre>
+<p>複数ツールを追加する際のルーター:</p>
+<pre><span class="lang-tag">python</span><code>def run_tool(tool_name, tool_input):
+    if tool_name == "get_current_datetime":
+        return get_current_datetime(**tool_input)
+    elif tool_name == "add_duration_to_datetime":
+        return add_duration_to_datetime(**tool_input)
+    elif tool_name == "set_reminder":
+        return set_reminder(**tool_input)</code></pre>
+
+<h3>細粒度のツール制御 (Fine-Grained Tool Calling) <span class="anchor-link">#</span></h3>
+<p>ストリーミング時のツール引数 JSON イベント: <code>InputJsonEvent</code></p>
+<ul>
+  <li><code>partial_json</code>: 生成中の JSON チャンク</li>
+  <li><code>snapshot</code>: 累積された JSON 全体</li>
+</ul>
+<p>通常: Anthropic API はトップレベルの key-value ペアが完成するまでバッファリングしてから送信 (JSON バリデーション付き)。</p>
+<p><strong>fine_grained=True</strong> を有効にするとバリデーションをスキップし、生成されるたびにチャンクを即時送信:</p>
+<pre><span class="lang-tag">python</span><code>run_conversation(messages, tools=[save_article_schema], fine_grained=True)</code></pre>
+<p>注意: <code>fine_grained=True</code> 時は不正 JSON が来る可能性があるため、エラーハンドリングが必要:</p>
+<pre><span class="lang-tag">python</span><code>try:
+    parsed_args = json.loads(chunk.snapshot)
+except json.JSONDecodeError:
+    print("Received invalid JSON, continuing...")</code></pre>
+
+<h3>組み込みツール① テキスト編集ツール (Text Editor Tool) <span class="anchor-link">#</span></h3>
+<p>Claude はファイル操作の JSON スキーマを <strong>自分で知っている</strong> (実装は開発者が提供)。</p>
+<p><strong>できること:</strong> ファイル/ディレクトリの表示・行範囲表示・テキスト置換・新規ファイル作成・行挿入・変更の undo</p>
+<p><strong>スキーマスタブ (モデルによって異なる):</strong></p>
+<pre><span class="lang-tag">python</span><code>def get_text_edit_schema(model):
+    if model.startswith("claude-3-7-sonnet"):
+        return {"type": "text_editor_20250124", "name": "str_replace_editor"}
+    elif model.startswith("claude-3-5-sonnet"):
+        return {"type": "text_editor_20241022", "name": "str_replace_editor"}</code></pre>
+<p>→ スタブを渡すと Claude が内部でフルスキーマに展開する。実装 (ファイル読み書き等) は開発者が担当。</p>
+
+<h3>組み込みツール② Web 検索ツール (Web Search Tool) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>web_search_schema = {
+    "type": "web_search_20250305",
+    "name": "web_search",
+    "max_uses": 5,           # 1リクエスト中の最大検索回数
+    "allowed_domains": ["nih.gov"]  # 検索ドメインを制限 (任意)
+}</code></pre>
+<p><strong>事前設定が必要:</strong> console.anthropic.com の Settings &gt; Privacy で Web Search を有効にする。</p>
+<p><strong>レスポンスのブロック構造:</strong></p>
+<ul>
+  <li><code>TextBlock</code>: Claude の説明テキスト</li>
+  <li><code>ServerToolUseBlock</code>: 実際の検索クエリ</li>
+  <li><code>WebSearchToolResultBlock</code>: 検索結果まとめ</li>
+  <li><code>WebSearchResultBlock</code>: 個別の検索結果 (タイトル・URL)</li>
+  <li><code>CitationBlock</code>: Claude が引用した具体的なテキスト</li>
+</ul>
+
+<h3>tool_choice オプション <span class="anchor-link">#</span></h3>
+<ul>
+  <li><code>{"type": "auto"}</code>: 自動選択 (デフォルト)</li>
+  <li><code>{"type": "any"}</code>: 少なくとも1つのツールを必ず使う</li>
+  <li><code>{"type": "tool", "name": "..."}</code>: 指定ツールを強制使用</li>
+  <li><code>{"type": "none"}</code>: ツールを使わない</li>
+</ul>
+
+<h2 id="api-s5"><span class="h2-num">①-5</span>セクション5: RAG (Retrieval Augmented Generation) <span class="anchor-link">#</span></h2>
+
+<h3>RAGとは <span class="anchor-link">#</span></h3>
+<p>大きなドキュメントを <strong>チャンクに分割</strong> し、質問に関連する部分だけを取得してClaudeに渡す技術。</p>
+<p><strong>なぜ必要か:</strong></p>
+<ul>
+  <li>800ページの文書を全部プロンプトに入れると → 高コスト・遅い・コンテキスト上限超過</li>
+  <li>RAGで関連部分だけを渡す → 効率的・安価・スケーラブル</li>
+</ul>
+
+<h3>RAGの基本フロー (6ステップ) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">flow</span><code>① ドキュメントをチャンクに分割
+② 各チャンクを埋め込みベクトルに変換
+③ ベクトル DB に保存 (前処理完了・待機)
+④ ユーザーの質問を埋め込みベクトルに変換
+⑤ DB で類似ベクトルを検索 (コサイン類似度)
+⑥ 関連チャンクをプロンプトに挿入して Claude に渡す</code></pre>
+
+<h3>テキストチャンキング戦略 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>戦略</th><th>特徴</th><th>適用シーン</th></tr></thead>
+<tbody>
+<tr><td><strong>固定長 (サイズ基準)</strong></td><td>最もシンプル・どんな文書でも動作</td><td>本番のフォールバックに最適</td></tr>
+<tr><td><strong>構造基準</strong></td><td>セクション・見出しで分割・最高品質</td><td>フォーマットが保証されている文書 (Markdown等)</td></tr>
+<tr><td><strong>文単位</strong></td><td>文末で分割・重複オーバーラップあり</td><td>一般テキスト文書</td></tr>
+<tr><td><strong>意味的</strong></td><td>NLP で文間の関連度を計算</td><td>高品質が必要・計算コスト許容の場合</td></tr>
+</tbody></table></div>
+
+<h4>コード例 (固定長チャンク)</h4>
+<pre><span class="lang-tag">python</span><code>def chunk_by_char(text, chunk_size=150, chunk_overlap=20):
+    chunks = []
+    start_idx = 0
+    while start_idx &lt; len(text):
+        end_idx = min(start_idx + chunk_size, len(text))
+        chunks.append(text[start_idx:end_idx])
+        start_idx = end_idx - chunk_overlap if end_idx &lt; len(text) else len(text)
+    return chunks</code></pre>
+
+<h4>コード例 (構造基準・Markdown)</h4>
+<pre><span class="lang-tag">python</span><code>def chunk_by_section(document_text):
+    pattern = r"\n## "
+    return re.split(pattern, document_text)</code></pre>
+
+<h4>コード例 (文単位)</h4>
+<pre><span class="lang-tag">python</span><code>def chunk_by_sentence(text, max_sentences_per_chunk=5, overlap_sentences=1):
+    sentences = re.split(r"(?&lt;=[.!?])\s+", text)
+    chunks = []
+    start_idx = 0
+    while start_idx &lt; len(sentences):
+        end_idx = min(start_idx + max_sentences_per_chunk, len(sentences))
+        chunks.append(" ".join(sentences[start_idx:end_idx]))
+        start_idx += max_sentences_per_chunk - overlap_sentences
+    return chunks</code></pre>
+
+<h3>テキスト埋め込み (Embeddings) <span class="anchor-link">#</span></h3>
+<ul>
+  <li>テキストを <strong>数値ベクトル</strong> に変換</li>
+  <li>意味的に類似したテキストは近いベクトル空間に配置される</li>
+  <li>各次元が「何を表すか」は学習済みで人間には解釈できない</li>
+</ul>
+<p><strong>VoyageAI (推奨プロバイダー):</strong> Anthropic 自体は現在 embedding を提供していない → VoyageAI を使う。</p>
+<pre><span class="lang-tag">python</span><code>import voyageai
+client = voyageai.Client()  # VOYAGE_API_KEY を環境変数に設定
+
+def generate_embedding(text, model="voyage-3-large", input_type="query"):
+    result = client.embed([text], model=model, input_type=input_type)
+    return result.embeddings[0]</code></pre>
+<p><strong>コサイン類似度:</strong></p>
+<ul>
+  <li>ベクトル間の角度のコサインで類似度を計算</li>
+  <li>範囲: -1 〜 1 (1 に近いほど類似)</li>
+  <li><strong>コサイン距離</strong> = 1 - コサイン類似度 (0 に近いほど類似)</li>
+</ul>
+
+<h3>RAG 実装コード <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code># ① チャンク分割
+with open("./report.md", "r") as f:
+    text = f.read()
+chunks = chunk_by_section(text)
+
+# ② 埋め込み生成 (バッチ処理)
+embeddings = generate_embedding(chunks)
+
+# ③ ベクトル DB に格納 (テキストも一緒に保存)
+store = VectorIndex()
+for embedding, chunk in zip(embeddings, chunks):
+    store.add_vector(embedding, {"content": chunk})
+
+# ④ クエリ埋め込み生成
+user_embedding = generate_embedding("What did software engineering dept do?")
+
+# ⑤ 類似検索 (上位 k 件)
+results = store.search(user_embedding, 2)
+for doc, distance in results:
+    print(distance, doc["content"][:200])</code></pre>
+
+<h3>BM25 語彙的検索 <span class="anchor-link">#</span></h3>
+<p>キーワードの完全一致に強い検索手法。特定の ID や固有名詞の検索で意味検索より優れる。</p>
+<p><strong>BM25 アルゴリズムの仕組み:</strong></p>
+<ol>
+  <li>クエリをトークン化 (例: "INC-2023-Q4-011" → 2つのトークン)</li>
+  <li>各トークンが文書中に出現する頻度をカウント</li>
+  <li>出現頻度の低いトークン (レアな用語) を高く重み付け</li>
+  <li>重み付きスコアが高い文書を返す</li>
+</ol>
+<pre><span class="lang-tag">python</span><code>store = BM25Index()
+for chunk in chunks:
+    store.add_document({"content": chunk})
+results = store.search("What happened with INC-2023-Q4-011?", 3)</code></pre>
+
+<h3>マルチインデックス RAG パイプライン (ハイブリッド検索) <span class="anchor-link">#</span></h3>
+<p>意味検索 (VectorIndex) + 語彙検索 (BM25Index) を組み合わせる。</p>
+<p><strong>Reciprocal Rank Fusion (RRF) で結果を統合:</strong></p>
+<pre><span class="lang-tag">math</span><code>RRF_score(d) = Σ(1 / (k + rank_i(d)))</code></pre>
+<ul>
+  <li><code>k</code>: 定数 (一般的には 60)</li>
+  <li>複数インデックスで上位に来る文書が高スコアになる</li>
+</ul>
+<pre><span class="lang-tag">python</span><code>class Retriever:
+    def __init__(self, *indexes: SearchIndex):
+        self._indexes = list(indexes)
+
+    def add_document(self, document):
+        for index in self._indexes:
+            index.add_document(document)
+
+    def search(self, query_text, k=1, k_rrf=60):
+        # 各インデックスから結果取得 → RRF で統合
+        ...
+
+# 使い方
+retriever = Retriever(VectorIndex(), BM25Index())</code></pre>
+<p>同じ <code>add_document()</code> / <code>search()</code> インターフェースで実装すれば、新しい検索手法の追加が容易。</p>
+
+<h2 id="api-s6"><span class="h2-num">①-6</span>セクション6: Claude の機能 <span class="anchor-link">#</span></h2>
+
+<h3>拡張思考 (Extended Thinking) <span class="anchor-link">#</span></h3>
+<p>Claude が <strong>最終回答を出す前に考えを整理する</strong> 機能。</p>
+<pre><span class="lang-tag">python</span><code>response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=16000,
+    thinking={
+        "type": "enabled",
+        "budget_tokens": 10000  # 思考に使えるトークン数の上限
+    },
+    messages=[{"role": "user", "content": "複雑な数学の問題..."}]
+)
+
+# レスポンスに思考ブロックと回答ブロックが含まれる
+for block in response.content:
+    if block.type == "thinking":
+        print("思考:", block.thinking)
+    elif block.type == "text":
+        print("回答:", block.text)</code></pre>
+<div class="callout warn">
+<div class="callout-title">⚠️ 制限事項</div>
+<ul style="margin:0">
+  <li>温度 (temperature) と <strong>互換性なし</strong></li>
+  <li>アシスタントメッセージの事前入力と <strong>互換性なし</strong></li>
+  <li>コスト・レイテンシが増加</li>
+  <li>まず通常のプロンプトエンジニアリングを最適化し、それでも不十分な場合に使う</li>
+</ul>
+</div>
+
+<h3>画像サポート <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>import base64
+
+with open("image.jpg", "rb") as f:
+    image_data = base64.standard_b64encode(f.read()).decode("utf-8")
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/jpeg",
+                    "data": image_data
+                }
+            },
+            {"type": "text", "text": "この画像を説明してください"}
+        ]
+    }]
+)</code></pre>
+<p><strong>画像の制限:</strong></p>
+<ul>
+  <li>1リクエストで最大 <strong>100枚</strong></li>
+  <li>1枚あたり最大 <strong>5MB</strong></li>
+  <li>1枚送信時: 最大 <strong>8000px</strong> (幅・高さ)</li>
+  <li>複数枚送信時: 最大 <strong>2000px</strong> (幅・高さ)</li>
+  <li>トークン数: <code>(幅px × 高さpx) / 750</code></li>
+</ul>
+<p><strong>画像でも Prompt Engineering が重要:</strong> 単純な質問より、分析ステップを明示したプロンプトが大幅に精度向上。</p>
+
+<h3>PDF サポート <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>with open("document.pdf", "rb") as f:
+    file_bytes = base64.standard_b64encode(f.read()).decode("utf-8")
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{
+        "role": "user",
+        "content": [
+            {
+                "type": "document",    # 画像は "image"、PDF は "document"
+                "source": {
+                    "type": "base64",
+                    "media_type": "application/pdf",  # PDF の media_type
+                    "data": file_bytes,
+                }
+            },
+            {"type": "text", "text": "このPDFを1文で要約してください"}
+        ]
+    }]
+)</code></pre>
+<p>Claude は PDF 内のテキスト・画像・グラフ・表・構造を理解できる。</p>
+
+<h3>引用 (Citations) <span class="anchor-link">#</span></h3>
+<p>Claude が回答の根拠となる文書の箇所を <strong>引用付きで返す</strong> 機能。</p>
+<pre><span class="lang-tag">python</span><code># PDF + Citations
+{
+    "type": "document",
+    "source": {"type": "base64", "media_type": "application/pdf", "data": file_bytes},
+    "title": "earth.pdf",
+    "citations": {"enabled": True}   # ← これで有効化
+}
+
+# プレーンテキスト + Citations
+{
+    "type": "document",
+    "source": {"type": "text", "media_type": "text/plain", "data": article_text},
+    "title": "earth_article",
+    "citations": {"enabled": True}
+}</code></pre>
+<p><strong>Citations が返す情報:</strong></p>
+<ul>
+  <li><code>cited_text</code>: Claude が引用した実際のテキスト</li>
+  <li><code>document_index</code>: 複数文書がある場合のインデックス</li>
+  <li><code>document_title</code>: 文書のタイトル</li>
+  <li><code>start_page_number</code> / <code>end_page_number</code>: 引用箇所のページ (PDF の場合)</li>
+  <li>プレーンテキストの場合: ページ番号の代わりに文字位置</li>
+</ul>
+
+<h3>プロンプトキャッシング <span class="anchor-link">#</span></h3>
+<p>同じコンテンツを繰り返し送る場合に <strong>計算を再利用</strong> してコストと速度を改善。</p>
+<p><strong>仕組み:</strong> 最初のリクエストでキャッシュ書き込み → フォローアップで読み込み。TTL は <strong>1時間</strong>。</p>
+<p><strong>キャッシュブレークポイントの追加:</strong></p>
+<pre><span class="lang-tag">python</span><code># テキストブロックの longhand 形式が必要
+{
+    "type": "text",
+    "text": very_long_system_prompt,
+    "cache_control": {"type": "ephemeral"}  # ← キャッシュポイント
+}</code></pre>
+<div class="callout warn">
+<div class="callout-title">⚠️ 重要ルール</div>
+<ul style="margin:0">
+  <li><code>cache_control</code> は shorthand 形式 (単純文字列) では使えない (longhand 形式が必要)</li>
+  <li>キャッシュポイント以前のコンテンツ全体がキャッシュされる</li>
+  <li>キャッシュポイントまでの内容が1文字でも変わるとキャッシュ無効</li>
+  <li><strong>最小キャッシュ可能サイズ: 1024 トークン</strong> (それ以下はキャッシュされない)</li>
+  <li>最大 <strong>4つ</strong> のキャッシュブレークポイントを設定可能</li>
+</ul>
+</div>
+<p><strong>キャッシュ処理順序 (内部):</strong> ツール → システムプロンプト → メッセージ</p>
+<p><strong>ツールスキーマのキャッシュ実装:</strong></p>
+<pre><span class="lang-tag">python</span><code>if tools:
+    tools_clone = tools.copy()
+    last_tool = tools_clone[-1].copy()
+    last_tool["cache_control"] = {"type": "ephemeral"}
+    tools_clone[-1] = last_tool
+    params["tools"] = tools_clone</code></pre>
+<p><strong>レスポンスのキャッシュ確認:</strong></p>
+<pre><span class="lang-tag">text</span><code>初回リクエスト:   cache_creation_input_tokens=1772
+フォローアップ: cache_read_input_tokens=1772</code></pre>
+<p><strong>効果的な対象:</strong> ツールスキーマ (変化しない)、長いシステムプロンプト、反復文書分析</p>
+
+<h3>コード実行と Files API <span class="anchor-link">#</span></h3>
+<p><strong>Files API:</strong></p>
+<ul>
+  <li>ファイルを事前にアップロードし、<code>file_id</code> で参照</li>
+  <li>同じファイルを複数リクエストで再送しなくてよい</li>
+  <li><code>file_metadata = upload('streaming.csv')</code> → <code>file_metadata.id</code> を使う</li>
+</ul>
+<p><strong>コード実行ツール:</strong></p>
+<pre><span class="lang-tag">python</span><code>tools=[{"type": "code_execution_20250522", "name": "code_execution"}]</code></pre>
+<ul>
+  <li>隔離された Docker コンテナで Python コードを実行</li>
+  <li><strong>ネットワークアクセスなし</strong> (外部 API 呼び出し不可)</li>
+  <li>Claude が複数回コードを実行して反復的に分析可能</li>
+  <li>生成されたファイル (グラフ等) は Files API でダウンロード可能</li>
+</ul>
+<p><strong>Files API + コード実行の連携:</strong></p>
+<pre><span class="lang-tag">python</span><code>add_user_message(messages, [
+    {"type": "text", "text": "Analyze this CSV and generate a churn analysis plot"},
+    {"type": "container_upload", "file_id": file_metadata.id},  # ← ファイルをコンテナに渡す
+])</code></pre>
+<p><strong>レスポンスブロック:</strong></p>
+<ul>
+  <li><code>TextBlock</code>: Claude の説明</li>
+  <li><code>server_tool_use</code> ブロック: Claude が実行したコード</li>
+  <li><code>code_execution_tool_result</code> ブロック: 実行結果</li>
+  <li><code>code_execution_output</code> ブロック: 生成されたファイルの ID</li>
+</ul>
+
+<h2 id="api-s7"><span class="h2-num">①-7</span>セクション7: Model Context Protocol (APIコース内) <span class="anchor-link">#</span></h2>
+<p>詳細は本ページの <a href="#mcp-intro">② Introduction to MCP</a> セクションも参照。</p>
+
+<h3>MCP とは (APIコースでの説明) <span class="anchor-link">#</span></h3>
+<p>MCP はツール定義と実装の <strong>負担を外部の MCP サーバーに移す</strong> 仕組み。</p>
+<p><strong>MCP が解決する問題:</strong> GitHub チャットボットを作る場合、リポジトリ・PR・イシュー・プロジェクト…と膨大なツールをすべて自前で実装する必要がある。 → MCP なら、誰かが作った GitHub MCP サーバーに接続するだけ。</p>
+<p><strong>よくある誤解: MCP ≠ ツール使用</strong></p>
+<ul>
+  <li>MCP: ツール定義・実装を提供 (サーバー側)</li>
+  <li>ツール使用: Claude がツールを呼び出す仕組み (クライアント側)</li>
+  <li>→ <strong>補完的な技術</strong>。MCP はツール使用の土台を提供する。</li>
+</ul>
+
+<h3>MCP クライアントの通信フロー <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">flow</span><code>① ユーザーがクエリを送信
+② サーバーが MCP クライアントに ListToolsRequest を送る
+③ MCP サーバーが ListToolsResult を返す
+④ Claude にツール一覧 + クエリを送信
+⑤ Claude が CallToolRequest を返す
+⑥ MCP クライアントが MCP サーバーに CallToolRequest を送る
+⑦ MCP サーバーが外部 API (GitHub等) を呼び出し結果を返す
+⑧ ツール結果を Claude に返し、最終回答を生成</code></pre>
+<p><strong>トランスポートアグノスティック (通信方式を選ばない):</strong></p>
+<ul>
+  <li><code>stdio</code> (標準入出力): 同一マシン上の最も一般的な方式</li>
+  <li>HTTP / WebSocket: リモート接続にも対応</li>
+</ul>
+
+<h3>MCP サーバーの実装 (Python SDK) <span class="anchor-link">#</span></h3>
+<h4>初期化</h4>
+<pre><span class="lang-tag">python</span><code>from mcp.server.fastmcp import FastMCP
+from pydantic import Field
+
+mcp = FastMCP("DocumentMCP", log_level="ERROR")
+
+# ドキュメントをメモリに保存
+docs = {
+    "deposition.md": "...",
+    "report.pdf": "...",
+}</code></pre>
+
+<h4>ツール定義 (<code>@mcp.tool</code>)</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.tool(
+    name="read_doc_contents",
+    description="Read the contents of a document and return it as a string."
+)
+def read_document(
+    doc_id: str = Field(description="Id of the document to read")
+):
+    if doc_id not in docs:
+        raise ValueError(f"Doc with id {doc_id} not found")
+    return docs[doc_id]
+
+@mcp.tool(
+    name="edit_document",
+    description="Edit a document by replacing a string in the documents content."
+)
+def edit_document(
+    doc_id: str = Field(description="Id of the document that will be edited"),
+    old_str: str = Field(description="The text to replace. Must match exactly."),
+    new_str: str = Field(description="The new text to insert.")
+):
+    if doc_id not in docs:
+        raise ValueError(f"Doc with id {doc_id} not found")
+    docs[doc_id] = docs[doc_id].replace(old_str, new_str)</code></pre>
+<p><strong>SDK の利点:</strong> 型ヒントから JSON スキーマを自動生成、<code>Field</code> の description が Claude への説明になる。</p>
+
+<h3>リソース定義 (<code>@mcp.resource</code>) <span class="anchor-link">#</span></h3>
+<h4>直接リソース (固定 URI)</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.resource("docs://documents", mime_type="application/json")
+def list_docs() -&gt; list[str]:
+    return list(docs.keys())</code></pre>
+<h4>テンプレートリソース (パラメータあり)</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.resource("docs://documents/{doc_id}", mime_type="text/plain")
+def fetch_doc(doc_id: str) -&gt; str:
+    if doc_id not in docs:
+        raise ValueError(f"Doc with id {doc_id} not found")
+    return docs[doc_id]</code></pre>
+<p><strong>Resources はツール使用を介さずコンテキストに直接注入できる</strong> (<code>@document名</code> メンション機能に活用)。</p>
+
+<h3>プロンプト定義 (<code>@mcp.prompt</code>) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>from mcp.server.fastmcp import base
+
+@mcp.prompt(
+    name="format",
+    description="Rewrites the contents of the document in Markdown format."
+)
+def format_document(
+    doc_id: str = Field(description="Id of the document to format")
+) -&gt; list[base.Message]:
+    prompt = f"""
+Your goal is to reformat a document to be written with markdown syntax.
+The id of the document you need to reformat is: {doc_id}
+Use the 'edit_document' tool to edit the document.
+"""
+    return [base.UserMessage(prompt)]</code></pre>
+<p>プロンプトはサーバー作者が <strong>テスト・評価済みの高品質な指示</strong> を提供できる。ユーザーが <code>/format report.pdf</code> のようなスラッシュコマンドとして使える。</p>
+
+<h3>MCP クライアントの実装 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>from mcp import ClientSession
+from mcp.client.stdio import stdio_client
+from pydantic import AnyUrl
+import json
+
+class MCPClient:
+    def __init__(self):
+        self._session = None
+
+    def session(self):
+        return self._session
+
+    async def list_tools(self) -&gt; list:
+        result = await self.session().list_tools()
+        return result.tools
+
+    async def call_tool(self, tool_name: str, tool_input: dict):
+        return await self.session().call_tool(tool_name, tool_input)
+
+    async def list_resources(self) -&gt; list:
+        result = await self.session().list_resources()
+        return result.resources
+
+    async def read_resource(self, uri: str):
+        result = await self.session().read_resource(AnyUrl(uri))
+        resource = result.contents[0]
+        if isinstance(resource, types.TextResourceContents):
+            if resource.mimeType == "application/json":
+                return json.loads(resource.text)
+            return resource.text
+
+    async def list_prompts(self) -&gt; list:
+        result = await self.session().list_prompts()
+        return result.prompts
+
+    async def get_prompt(self, prompt_name: str, args: dict[str, str]):
+        result = await self.session().get_prompt(prompt_name, args)
+        return result.messages</code></pre>
+<p>クライアント接続例:</p>
+<pre><span class="lang-tag">python</span><code>async with MCPClient(command="uv", args=["run", "mcp_server.py"]) as client:
+    tools = await client.list_tools()</code></pre>
+
+<h3>サーバーインスペクター <span class="anchor-link">#</span></h3>
+<p>開発・デバッグ用のブラウザ UI:</p>
+<pre><span class="lang-tag">bash</span><code>mcp dev mcp_server.py   # ポート 6277 でブラウザ UI が起動</code></pre>
+<p>使い方: Connect → Tools タブ → List Tools → ツール選択 → パラメータ入力 → Run Tool</p>
+<p><strong>開発ループ:</strong> コード変更 → インスペクターでテスト → アプリに接続せず単体で検証</p>
+
+<h3>MCP の3プリミティブまとめ <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>プリミティブ</th><th>制御者</th><th>定義方法</th><th>典型的な用途</th></tr></thead>
+<tbody>
+<tr><td><strong>Tools</strong></td><td>モデル (Claude)</td><td><code>@mcp.tool()</code></td><td>ファイル読み書き・API呼び出し</td></tr>
+<tr><td><strong>Resources</strong></td><td>アプリケーション</td><td><code>@mcp.resource()</code></td><td>@メンション・コンテキスト注入</td></tr>
+<tr><td><strong>Prompts</strong></td><td>ユーザー</td><td><code>@mcp.prompt()</code></td><td><code>/format</code> などのスラッシュコマンド</td></tr>
+</tbody></table></div>
+<p><strong>Claude Code + MCP 連携:</strong></p>
+<pre><span class="lang-tag">bash</span><code>claude mcp add [server-name] [command-to-start-server]
+claude mcp add documents uv run main.py</code></pre>
+<p>人気の MCP インテグレーション: <code>sentry-mcp</code> (バグ発見・修正)、<code>playwright-mcp</code> (ブラウザ自動化)、<code>figma-context-mcp</code> (デザイン参照)、<code>slack-mcp</code> (チーム通知)</p>
+
+<h2 id="api-s8"><span class="h2-num">①-8</span>セクション8: Claude Code &amp; Anthropic アプリ <span class="anchor-link">#</span></h2>
+<p>→ Claude Code 専用コースのノートは本ページの <a href="#cc-intro">③ Claude Code in Action</a> セクションを参照。</p>
+<p><strong>Anthropic アプリの概要:</strong></p>
+<ul>
+  <li><strong>Claude.ai</strong>: Webインターフェース</li>
+  <li><strong>Claude Code</strong>: ターミナルベースのコーディングアシスタント (開発者向け)</li>
+  <li><strong>Computer Use</strong>: デスクトップ操作・ブラウザ操作ができるツールセット
+    <ul>
+      <li>Web サイト閲覧・デスクトップアプリ操作・視覚的 UI ナビゲーション</li>
+    </ul>
+  </li>
+</ul>
+<p>これらは <strong>エージェントの実例</strong> として有用: ツール統合・マルチステップ実行・環境との相互作用・自律的問題解決を実装している。</p>
+
+<h2 id="api-s9"><span class="h2-num">①-9</span>セクション9: エージェントとワークフロー <span class="anchor-link">#</span></h2>
+
+<h3>ワークフロー vs エージェント (詳細比較) <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>ワークフロー</th><th>エージェント</th></tr></thead>
+<tbody>
+<tr><td><strong>定義</strong></td><td>手順が事前にわかっている場合の定義済みフロー</td><td>ゴールとツールを与えて Claude に計画させる</td></tr>
+<tr><td><strong>メリット</strong></td><td>高精度・テスト容易・予測可能</td><td>柔軟・未知タスク対応・ユーザー対話的</td></tr>
+<tr><td><strong>デメリット</strong></td><td>特定タスクに限定・入力を事前に決める必要あり</td><td>タスク完了率が低い・評価・テストが難しい</td></tr>
+<tr><td><strong>使う場面</strong></td><td>手順が明確な定型タスク</td><td>不規則・多様なユーザーリクエスト</td></tr>
+</tbody></table></div>
+<div class="callout info">
+<div class="callout-title">📌 原則</div>
+<strong>まずワークフローを実装し、必要な場合のみエージェントを使う。</strong> ユーザーが求めるのは信頼性のある動作であり、アーキテクチャの種類ではない。
+</div>
+
+<h3>並列化ワークフロー <span class="anchor-link">#</span></h3>
+<p>複数の独立したサブタスクを <strong>同時に実行</strong> してから集約するパターン。</p>
+<pre><span class="lang-tag">python</span><code>import asyncio
+
+async def analyze_aspect(aspect, content):
+    response = await client.messages.create(...)
+    return response
+
+# 並列実行
+results = await asyncio.gather(
+    analyze_aspect("強度", material_data),
+    analyze_aspect("コスト", material_data),
+    analyze_aspect("環境負荷", material_data)
+)
+
+# 結果を集約
+final_decision = aggregate(results)</code></pre>
+<p><strong>利点:</strong></p>
+<ul>
+  <li>各側面に集中した専用プロンプトで <strong>精度向上</strong></li>
+  <li>各プロンプトを <strong>独立してテスト・改善</strong> できる</li>
+  <li>新しい側面の追加が <strong>容易</strong></li>
+</ul>
+
+<h3>チェーニングワークフロー <span class="anchor-link">#</span></h3>
+<p>複数のサブタスクを <strong>順次実行</strong> し、前のステップの出力を次のステップに渡すパターン。</p>
+<pre><span class="lang-tag">python</span><code># ステップ1: 初稿生成
+draft = generate_article(topic)
+
+# ステップ2: 品質改善 (AIっぽい表現を除去、絵文字除去など)
+final = revise_article(draft, """
+以下を修正してください:
+1. AIが書いたと分かる表現を削除
+2. 絵文字を全て削除
+3. 陳腐な表現を技術ライター風に修正
+""")</code></pre>
+
+<h3>ルーティングワークフロー <span class="anchor-link">#</span></h3>
+<p>入力を <strong>分類</strong> し、専門化されたパイプラインに振り分けるパターン。</p>
+<pre><span class="lang-tag">python</span><code># Step 1: 入力を分類
+category = client.messages.create(
+    ...
+    messages=[{"role": "user", "content": f"分類してください: {user_input}"}]
+)
+
+# Step 2: カテゴリに応じたプロンプトで処理
+if category == "技術系":
+    response = technical_pipeline(user_input)
+elif category == "エンタメ系":
+    response = entertainment_pipeline(user_input)</code></pre>
+
+<h3>エージェントとツール <span class="anchor-link">#</span></h3>
+<p>エージェントはツールを使って <strong>自律的にタスクを完了</strong> する:</p>
+<pre><span class="lang-tag">python</span><code># エージェントループ
+while response.stop_reason == "tool_use":
+    # ツールを実行
+    tool_result = execute_tool(response.tool_use)
+    # 結果を返して続きを生成
+    response = client.messages.create(
+        tools=tools,
+        messages=[...tool_result...]
+    )
+# stop_reason == "end_turn" で完了</code></pre>
+<p><strong>ツールは抽象的に設計する:</strong> Claude Code の例: <code>bash</code>, <code>read</code>, <code>write</code>, <code>edit</code>, <code>glob</code>, <code>grep</code> という <strong>汎用ツール</strong> を持つ。「コードをリファクタリングする」「依存関係をインストールする」などの特化ツールは持たない。 → 汎用ツールを組み合わせることで無数のシナリオに対応できる。</p>
+
+<h3>環境インスペクション (Environment Inspection) <span class="anchor-link">#</span></h3>
+<p>エージェントが <strong>アクションの結果を観察・確認</strong> できる仕組みを設計することが重要。</p>
+<p><strong>なぜ重要か:</strong> Claude はボタンをクリックした結果 (新しいページに移動したか、メニューが開いたか等) を見ないと次の判断ができない。</p>
+<p><strong>実践パターン:</strong></p>
+<ul>
+  <li><strong>ファイル操作</strong>: 変更前に必ず現在の内容を読む (Read before Write)</li>
+  <li><strong>UI 操作</strong>: アクション後にスクリーンショットを取る</li>
+  <li><strong>API 呼び出し</strong>: レスポンスに期待データが含まれるか確認</li>
+  <li><strong>生成物</strong>: whisper.cpp で字幕生成・FFmpeg でスクリーンショット抽出して品質確認</li>
+</ul>
+<p><strong>システムプロンプトで環境インスペクションを指示:</strong></p>
+<pre><span class="lang-tag">text</span><code>Use bash to run whisper.cpp and verify dialogue placement.
+Use FFmpeg to extract screenshots at regular intervals to visually inspect the output.</code></pre>
+<p>これにより Claude がエラーを検出・修正し、品質を自律的に保証できる。</p>
+
+<h2 id="api-summary"><span class="h2-num">①-★</span>重要まとめ (API編) <span class="anchor-link">#</span></h2>
+<div class="table-wrap"><table>
+<thead><tr><th>トピック</th><th>キーポイント</th></tr></thead>
+<tbody>
+<tr><td>API基礎</td><td>ステートレス、毎回完全な会話履歴を送る</td></tr>
+<tr><td>リクエスト処理</td><td>Tokenize → Embed → Contextualize → Generate</td></tr>
+<tr><td>システムプロンプト</td><td><code>system</code> パラメータで役割・制約を定義</td></tr>
+<tr><td>温度</td><td>0=確定的, 1=創造的; 拡張思考と非互換</td></tr>
+<tr><td>ストリーミング</td><td><code>client.messages.stream()</code> でリアルタイム送信</td></tr>
+<tr><td>構造化データ</td><td>アシスタント事前入力 + ストップシーケンス</td></tr>
+<tr><td>Evals</td><td>5ステップサイクル; モデル採点=強み・弱み・推論を要求</td></tr>
+<tr><td>コードグレーダー</td><td>validate_json/python/regex; スコア = (model + syntax) / 2</td></tr>
+<tr><td>ツール使用</td><td>スキーマ→Claude要求→実行→結果返送→最終回答</td></tr>
+<tr><td>マルチツールループ</td><td>stop_reason == "tool_use" の間ループ継続</td></tr>
+<tr><td>Fine-grained tools</td><td>fine_grained=True でバリデーションスキップ・即時ストリーミング</td></tr>
+<tr><td>テキスト編集ツール</td><td>スキーマスタブのみ提供・実装は開発者担当</td></tr>
+<tr><td>Web検索ツール</td><td>max_uses・allowed_domains 設定可能</td></tr>
+<tr><td>プロンプトキャッシュ</td><td>TTL=1時間、最小1024トークン、最大4ブレークポイント</td></tr>
+<tr><td>拡張思考</td><td>budget_tokens, 温度・事前入力と非互換</td></tr>
+<tr><td>画像</td><td>最大100枚/req, 5MB/枚; tokens=(w×h)/750</td></tr>
+<tr><td>PDF</td><td>type="document", media_type="application/pdf"</td></tr>
+<tr><td>Citations</td><td>cited_text / document_index / page numbers</td></tr>
+<tr><td>Files API</td><td>事前アップロード → file_id 参照; container_upload でコード実行に渡す</td></tr>
+<tr><td>RAG</td><td>チャンク分割→埋め込み→類似検索→渡す</td></tr>
+<tr><td>BM25</td><td>レア用語を高重み付け・完全一致に強い</td></tr>
+<tr><td>Hybrid RAG</td><td>Vector + BM25 → Reciprocal Rank Fusion で統合</td></tr>
+<tr><td>ワークフロー</td><td>並列化・チェーニング・ルーティングの3パターン</td></tr>
+<tr><td>エージェント</td><td>汎用ツールを自律的に組み合わせる・環境インスペクション必須</td></tr>
+<tr><td>ワークフロー優先</td><td>可能な限りワークフロー; エージェントは柔軟だが信頼性低い</td></tr>
+</tbody></table></div>
+
+<!-- ========================== ② INTRODUCTION TO MCP ========================== -->
+<h2 id="mcp-intro"><span class="h2-num">②</span>Introduction to Model Context Protocol <span class="anchor-link">#</span></h2>
+
+<h3>MCP とは何か <span class="anchor-link">#</span></h3>
+<p><strong>Model Context Protocol (MCP)</strong> は、Claude にコンテキストとツールを提供するための通信レイヤー。</p>
+<p><strong>目的:</strong> ツール定義と実行の負担を、自分のサーバーから <strong>専門化された MCPサーバー</strong> に移す。</p>
+
+<h4>MCP が解決する問題</h4>
+<p>例: GitHub のデータにアクセスするチャットインターフェースを構築する場合</p>
+<ul>
+  <li><strong>MCP なし</strong>: リポジトリ、PR、イシュー、プロジェクトなど GitHub の膨大な機能全てに対してツールスキーマと関数を手動で書く必要がある</li>
+  <li><strong>MCP あり</strong>: 誰かが既に実装した GitHub MCP サーバーを接続するだけ</li>
+</ul>
+
+<h4>よくある誤解: MCP ≠ ツール使用</h4>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>MCP</th><th>ツール使用 (Tool Use)</th></tr></thead>
+<tbody>
+<tr><td>役割</td><td>ツール定義と実装を提供</td><td>Claude がツールを呼び出す仕組み</td></tr>
+<tr><td>誰が実装するか</td><td>MCP サーバー開発者</td><td>アプリケーション開発者</td></tr>
+<tr><td>目的</td><td>統合の再利用</td><td>Claude の能力拡張</td></tr>
+</tbody></table></div>
+<p>→ <strong>補完的な技術</strong>。MCP はツールを提供し、ツール使用は Claude がそれを呼び出す。</p>
+
+<h2 id="mcp-arch"><span class="h2-num">②</span>MCP のアーキテクチャ <span class="anchor-link">#</span></h2>
+<pre><span class="lang-tag">arch</span><code>ユーザー
+  ↓
+あなたのアプリ (MCP クライアントを含む)
+  ↓
+MCP クライアント ← → MCP サーバー (ツール/リソース/プロンプトを提供)
+                          ↓
+                     外部サービス (GitHub, DB など)</code></pre>
+
+<h4>コンポーネント</h4>
+<ul>
+  <li><strong>MCP クライアント</strong>: MCPサーバーと接続するコード (あなたのアプリ内)</li>
+  <li><strong>MCP サーバー</strong>: ツール・リソース・プロンプトを定義して提供する専門サービス</li>
+  <li><strong>Claude</strong>: クライアントから得たツールリストを使って問題を解決する</li>
+</ul>
+
+<h2 id="mcp-transport"><span class="h2-num">②</span>トランスポートとメッセージ <span class="anchor-link">#</span></h2>
+
+<h3>トランスポートアグノスティック <span class="anchor-link">#</span></h3>
+<p>MCP はさまざまな通信プロトコルで動作する:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>トランスポート</th><th>説明</th><th>主な用途</th></tr></thead>
+<tbody>
+<tr><td><strong>stdio</strong></td><td>標準入出力</td><td>ローカルサーバー (最一般的)</td></tr>
+<tr><td>HTTP</td><td>HTTPプロトコル</td><td>リモートサーバー</td></tr>
+<tr><td>WebSocket</td><td>双方向通信</td><td>リアルタイム</td></tr>
+</tbody></table></div>
+<p>最も一般的なのは、<strong>クライアントとサーバーが同じマシン</strong> で <code>stdio</code> 通信。</p>
+
+<h3>MCP メッセージタイプ <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>メッセージ</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>ListToolsRequest / ListToolsResult</code></td><td>クライアント→サーバー: 利用可能なツールは？</td></tr>
+<tr><td><code>CallToolRequest / CallToolResult</code></td><td>クライアント→サーバー: このツールを実行して</td></tr>
+<tr><td><code>ListResourcesRequest</code></td><td>リソース一覧の取得</td></tr>
+<tr><td><code>ReadResourceRequest / ReadResourceResult</code></td><td>リソース内容の取得</td></tr>
+<tr><td><code>ListPromptsRequest</code></td><td>プロンプト一覧の取得</td></tr>
+<tr><td><code>GetPromptRequest / GetPromptResult</code></td><td>プロンプト内容の取得</td></tr>
+</tbody></table></div>
+
+<h2 id="mcp-primitives"><span class="h2-num">②</span>MCP の3つのプリミティブ <span class="anchor-link">#</span></h2>
+<div class="table-wrap"><table>
+<thead><tr><th>プリミティブ</th><th>制御者</th><th>説明</th><th>用途例</th></tr></thead>
+<tbody>
+<tr><td><strong>Tools (ツール)</strong></td><td>モデル (Claude)</td><td>Claudeが自律的に呼び出す</td><td>ファイル読み込み、API呼び出し</td></tr>
+<tr><td><strong>Resources (リソース)</strong></td><td>アプリケーション</td><td>アプリコードが取得して利用</td><td>オートコンプリート、コンテキスト注入</td></tr>
+<tr><td><strong>Prompts (プロンプト)</strong></td><td>ユーザー</td><td>ユーザーが選択・使用</td><td><code>/format</code>, <code>/summarize</code> などのコマンド</td></tr>
+</tbody></table></div>
+<div class="callout tip">
+<div class="callout-title">💡 覚え方</div>
+<ul style="margin:0">
+  <li>Tools → <strong>Model</strong> controlled (Claude が判断して使う)</li>
+  <li>Resources → <strong>App</strong> controlled (アプリが取得してClaudeに渡す)</li>
+  <li>Prompts → <strong>User</strong> controlled (ユーザーが明示的に選ぶ)</li>
+</ul>
+</div>
+
+<h2 id="mcp-server"><span class="h2-num">②</span>MCP サーバーの実装 <span class="anchor-link">#</span></h2>
+
+<h3>Python SDK のセットアップ <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>from mcp.server.fastmcp import FastMCP
+from pydantic import Field
+
+# サーバーの初期化
+mcp = FastMCP("DocumentMCP", log_level="ERROR")
+
+# ドキュメントストア
+docs = {
+    "report.pdf": "このレポートは...",
+    "plan.md": "プロジェクト計画...",
+}</code></pre>
+
+<h3>ツールの定義 (<code>@mcp.tool()</code> デコレータ) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>@mcp.tool()
+def read_doc_contents(
+    doc_id: str = Field(description="読み込むドキュメントのID")
+) -&gt; str:
+    """ドキュメントの内容を返します"""
+    if doc_id not in docs:
+        raise ValueError(f"ドキュメント {doc_id} が見つかりません")
+    return docs[doc_id]
+
+@mcp.tool()
+def edit_document(
+    doc_id: str = Field(description="編集するドキュメントのID"),
+    old_str: str = Field(description="置換前のテキスト (空白含め完全一致)"),
+    new_str: str = Field(description="置換後のテキスト")
+) -&gt; None:
+    """ドキュメントの内容を編集します"""
+    if doc_id not in docs:
+        raise ValueError(f"ドキュメント {doc_id} が見つかりません")
+    docs[doc_id] = docs[doc_id].replace(old_str, new_str)</code></pre>
+<p><strong>SDK の利点:</strong></p>
+<ul>
+  <li>JSON スキーマを手動で書かなくてよい</li>
+  <li>型ヒントが自動バリデーションになる</li>
+  <li><code>Field(description=...)</code> が Claude への説明として使われる</li>
+  <li>デコレータでツール登録が自動化される</li>
+</ul>
+
+<h3>リソースの定義 (<code>@mcp.resource()</code> デコレータ) <span class="anchor-link">#</span></h3>
+<h4>静的リソース (固定URI)</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.resource("docs://list")
+def list_documents() -&gt; str:
+    """利用可能なドキュメントの一覧を返します"""
+    return "\n".join(docs.keys())</code></pre>
+
+<h4>テンプレートリソース (パラメータあり)</h4>
+<pre><span class="lang-tag">python</span><code>@mcp.resource("docs://{doc_id}")
+def get_document(doc_id: str) -&gt; str:
+    """指定したドキュメントの内容を返します"""
+    if doc_id not in docs:
+        raise ValueError(f"ドキュメント {doc_id} が見つかりません")
+    return docs[doc_id]</code></pre>
+
+<h4>リソースの使い方 (クライアント側)</h4>
+<pre><span class="lang-tag">python</span><code>async def read_resource(self, uri: str):
+    result = await self.session().read_resource(AnyUrl(uri))
+    resource = result.contents[0]
+
+    if isinstance(resource, types.TextResourceContents):
+        if resource.mimeType == "application/json":
+            return json.loads(resource.text)
+        return resource.text
+    # BlobResourceContents の場合はバイナリ処理</code></pre>
+<p><strong>リソースの活用例:</strong></p>
+<ul>
+  <li><code>@ドキュメント名</code> でドキュメントを参照するオートコンプリート</li>
+  <li>プロンプトへのコンテキスト自動注入</li>
+</ul>
+
+<h3>プロンプトの定義 (<code>@mcp.prompt()</code> デコレータ) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>@mcp.prompt()
+def format_document(
+    doc_id: str = Field(description="フォーマットするドキュメントのID")
+) -&gt; list:
+    """ドキュメントをMarkdown形式にフォーマットするためのプロンプト"""
+    doc_content = docs.get(doc_id, "")
+    return [
+        {
+            "role": "user",
+            "content": f"""以下のドキュメントをMarkdown形式にフォーマットしてください。
+見出し・リスト・強調を適切に使用してください。
+
+&lt;document&gt;
+{doc_content}
+&lt;/document&gt;"""
+        }
+    ]</code></pre>
+<p><strong>プロンプトを使う理由:</strong></p>
+<ul>
+  <li>ユーザーが自分でプロンプトを書くより <strong>高品質な結果</strong> が得られる</li>
+  <li>MCP サーバー作成者がテスト・評価済みのプロンプトを提供できる</li>
+  <li><code>/format doc_id</code> のような <strong>スラッシュコマンド</strong> として提供できる</li>
+</ul>
+
+<h2 id="mcp-client"><span class="h2-num">②</span>MCP クライアントの実装 <span class="anchor-link">#</span></h2>
+
+<h3>クライアントアーキテクチャ <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>from mcp import ClientSession
+from mcp.client.stdio import stdio_client
+
+class MCPClient:
+    def __init__(self):
+        self._session = None
+
+    def session(self):
+        return self._session
+
+    async def connect(self, server_script_path: str):
+        # サーバーに接続
+        ...
+
+    async def get_tools(self):
+        """利用可能なツールの一覧を取得"""
+        result = await self.session().list_tools()
+        return result.tools
+
+    async def call_tool(self, tool_name: str, args: dict):
+        """ツールを呼び出す"""
+        result = await self.session().call_tool(tool_name, args)
+        return result.content
+
+    async def list_resources(self):
+        """利用可能なリソースの一覧を取得"""
+        result = await self.session().list_resources()
+        return result.resources
+
+    async def read_resource(self, uri: str):
+        """リソースの内容を取得"""
+        result = await self.session().read_resource(AnyUrl(uri))
+        ...
+
+    async def list_prompts(self):
+        """利用可能なプロンプトの一覧を取得"""
+        result = await self.session().list_prompts()
+        return result.prompts
+
+    async def get_prompt(self, prompt_name: str, args: dict[str, str]):
+        """プロンプトを取得 (変数を埋め込む)"""
+        result = await self.session().get_prompt(prompt_name, args)
+        return result.messages</code></pre>
+
+<h3>アプリケーションフロー <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">flow</span><code>ユーザーの質問
+  ↓
+MCPクライアント.get_tools() でツール一覧取得
+  ↓
+Claude に質問 + ツール一覧を送信
+  ↓
+Claude がツール呼び出しを要求
+  ↓
+MCPクライアント.call_tool() でツール実行
+  ↓
+結果を Claude に返す
+  ↓
+Claude が最終回答を生成
+  ↓
+ユーザーに返答</code></pre>
+
+<h2 id="mcp-inspector"><span class="h2-num">②</span>MCP サーバーインスペクター <span class="anchor-link">#</span></h2>
+<p>開発・デバッグ用のブラウザベースのUI。</p>
+<pre><span class="lang-tag">bash</span><code># サーバーをインスペクターモードで起動
+mcp dev mcp_server.py
+# → http://127.0.0.1:6274 にアクセス</code></pre>
+<p><strong>使い方:</strong></p>
+<ol>
+  <li>ブラウザで URL を開く</li>
+  <li><strong>Connect</strong> ボタンをクリックしてサーバーに接続</li>
+  <li><strong>Tools</strong> タブ: ツールを一覧表示・テスト実行</li>
+  <li><strong>Resources</strong> タブ: 静的リソースとテンプレートリソースを確認</li>
+  <li><strong>Prompts</strong> タブ: プロンプトをテスト</li>
+</ol>
+
+<h2 id="mcp-patterns"><span class="h2-num">②</span>実践的な統合パターン <span class="anchor-link">#</span></h2>
+
+<h3>@メンション によるコンテキスト注入 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code># ユーザーが "@report.pdf を要約して" と入力した場合
+if user_input.startswith("@"):
+    doc_id = user_input[1:].split()[0]  # "report.pdf" を抽出
+    doc_content = await client.read_resource(f"docs://{doc_id}")
+    # ドキュメント内容をプロンプトに注入
+    augmented_prompt = f"&lt;document&gt;{doc_content}&lt;/document&gt;\n{user_input}"</code></pre>
+<p><strong>用途:</strong></p>
+<ul>
+  <li>オートコンプリート: <code>list_resources()</code> でリソース一覧を取得しUI表示</li>
+  <li>コンテキスト注入: リソース内容を自動的にプロンプトに追加 (Claude がツールを使わなくて済む)</li>
+</ul>
+
+<h3>/コマンド によるプロンプト活用 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">python</span><code>if user_input.startswith("/"):
+    command = user_input[1:].split()[0]   # "format"
+    arg = user_input.split()[1]           # "report.pdf"
+
+    # プロンプトを取得して会話に使用
+    prompt_messages = await client.get_prompt(command, {"doc_id": arg})
+    response = await ask_claude(prompt_messages)</code></pre>
+
+<h2 id="mcp-summary"><span class="h2-num">②-★</span>MCP まとめ <span class="anchor-link">#</span></h2>
+<div class="table-wrap"><table>
+<thead><tr><th>概念</th><th>ポイント</th></tr></thead>
+<tbody>
+<tr><td>MCPの目的</td><td>ツール定義・実装の再利用と標準化</td></tr>
+<tr><td>Transport</td><td>stdio (ローカル) が最一般的、HTTP/WSもあり</td></tr>
+<tr><td>Tools</td><td>モデル制御。Claude が自律的に呼び出す</td></tr>
+<tr><td>Resources</td><td>アプリ制御。アプリが取得してClaudeに渡す</td></tr>
+<tr><td>Prompts</td><td>ユーザー制御。事前に用意された高品質な指示</td></tr>
+<tr><td><code>@mcp.tool()</code></td><td>型ヒント+Fieldで自動スキーマ生成</td></tr>
+<tr><td><code>@mcp.resource()</code></td><td>静的URI or テンプレートURI</td></tr>
+<tr><td><code>@mcp.prompt()</code></td><td>メッセージリストを返す</td></tr>
+<tr><td>インスペクター</td><td><code>mcp dev server.py</code> でデバッグUI起動</td></tr>
+</tbody></table></div>
+
+<!-- ========================== ③ CLAUDE CODE IN ACTION ========================== -->
+<h2 id="cc-intro"><span class="h2-num">③</span>Claude Code in Action <span class="anchor-link">#</span></h2>
+
+<h3>Claude Code とは <span class="anchor-link">#</span></h3>
+<p>Claude Code はコマンドラインで動作する <strong>AI コーディングアシスタント</strong>。言語モデルとツールシステムを組み合わせ、ファイル読み書き・コマンド実行・コード分析を自律的に行う。</p>
+
+<h2 id="cc-mechanism"><span class="h2-num">③</span>コーディングアシスタントの仕組み <span class="anchor-link">#</span></h2>
+<p>コーディングアシスタントがタスクを解決する3ステップ:</p>
+<ol>
+  <li><strong>コンテキスト収集</strong> — エラー内容を理解し、関連ファイルを特定する</li>
+  <li><strong>計画策定</strong> — 解決策を決める (コード変更・テスト実行など)</li>
+  <li><strong>実行</strong> — ファイルを更新し、コマンドを実行する</li>
+</ol>
+<p>→ ステップ1と3は <strong>外部環境との相互作用</strong> が必要 = ツール使用が必須</p>
+
+<h3>なぜ Claude Code が強いか <span class="anchor-link">#</span></h3>
+<ul>
+  <li>Claude は <strong>ツール使用が得意</strong> (見たことのないツールでも使いこなせる)</li>
+  <li>強いツール活用能力 → 複雑なタスク対応・拡張性・セキュリティ向上</li>
+  <li>コードベースをインデックス化せずにナビゲートできる (コード全体を外部サーバーに送らない)</li>
+</ul>
+
+<h2 id="cc-install"><span class="h2-num">③</span>インストールとセットアップ <span class="anchor-link">#</span></h2>
+
+<h3>インストール方法 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">bash</span><code># macOS / Linux / WSL
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Windows PowerShell
+irm https://claude.ai/install.ps1 | iex
+
+# macOS (Homebrew)
+brew install --cask claude-code</code></pre>
+
+<h3>初回起動 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">bash</span><code>claude  # ← これだけで起動</code></pre>
+<ul>
+  <li>初回起動時にカラーテーマ選択と <strong>claude.ai アカウントでの認証</strong> が必要</li>
+  <li>API キーの代わりに claude.ai の認証情報を使用</li>
+</ul>
+
+<h3>サードパーティプロバイダー経由の利用 <span class="anchor-link">#</span></h3>
+<p>Amazon Bedrock、Google Cloud Vertex AI、Microsoft Foundry 経由でも利用可能 (追加設定が必要)。</p>
+
+<h2 id="cc-context"><span class="h2-num">③</span>コンテキスト管理 <span class="anchor-link">#</span></h2>
+
+<h3>/init コマンド <span class="anchor-link">#</span></h3>
+<p>新しいプロジェクトで最初に実行するコマンド。</p>
+<pre><span class="lang-tag">cmd</span><code>/init</code></pre>
+<p><strong>動作:</strong></p>
+<ol>
+  <li>コードベース全体を分析</li>
+  <li>プロジェクトの目的・アーキテクチャを理解</li>
+  <li>重要なコマンドとファイルを特定</li>
+  <li><strong>CLAUDE.md</strong> ファイルに要約を書き込む</li>
+</ol>
+<p>→ 以降のリクエストで常にこの情報がコンテキストとして使われる</p>
+
+<h3>CLAUDE.md ファイル <span class="anchor-link">#</span></h3>
+<p>プロジェクト固有の情報を Claude に伝えるファイル。</p>
+<pre><span class="lang-tag">markdown</span><code># プロジェクト概要
+このプロジェクトは...
+
+# 重要なコマンド
+- `npm run dev` — 開発サーバー起動
+- `npm test` — テスト実行
+
+# アーキテクチャ
+データベーススキーマは @prisma/schema.prisma で定義されています。</code></pre>
+
+<h4>CLAUDE.md での <code>@</code> メンション</h4>
+<pre><span class="lang-tag">markdown</span><code># データベーススキーマは @prisma/schema.prisma を参照してください</code></pre>
+<p>→ 毎回のリクエストにそのファイルの内容が自動で含まれる</p>
+
+<h4>他ツールとの統合</h4>
+<pre><span class="lang-tag">markdown</span><code>@AGENTS.md  ← 他のAIツール用の設定ファイルをインポート</code></pre>
+<p>→ 重複して書く必要なし</p>
+
+<h3>@ メンション (チャット内) <span class="anchor-link">#</span></h3>
+<p>会話中に特定ファイルを参照させる:</p>
+<pre><span class="lang-tag">cmd</span><code>@src/auth/login.ts のバグを修正してください</code></pre>
+
+<h3>/memory コマンド <span class="anchor-link">#</span></h3>
+<p>セッションをまたいで記憶させたい情報を保存:</p>
+<pre><span class="lang-tag">cmd</span><code>/memory コードスタイルは常に TypeScript strict モードを使うこと</code></pre>
+
+<h2 id="cc-changes"><span class="h2-num">③</span>変更を加える <span class="anchor-link">#</span></h2>
+
+<h3>スクリーンショットで視覚的に指示 <span class="anchor-link">#</span></h3>
+<ul>
+  <li>UIの特定部分を変更したいとき、スクリーンショットが最も効果的</li>
+  <li><strong><code>Ctrl+V</code></strong> (Windows/Linux) でスクリーンショットをチャットに貼り付け (Cmd+V ではない)</li>
+</ul>
+
+<h3>/effort コマンド (推論深度の調整) <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">cmd</span><code>/effort high   ← 高い推論深度
+/effort low    ← 低い推論深度 (デフォルト)</code></pre>
+<ul>
+  <li>複雑なロジック問題・デバッグに使う</li>
+  <li>追加トークンを消費するため コスト注意</li>
+</ul>
+
+<h3>プランモード (Plan Mode) <span class="anchor-link">#</span></h3>
+<p>複雑な変更の前に計画を立てさせる:</p>
+<pre><span class="lang-tag">cmd</span><code>/plan  ← または Shift+Tab で切り替え</code></pre>
+
+<h4>Plan Mode と /effort の使い分け</h4>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>プランモード</th><th>/effort high</th></tr></thead>
+<tbody>
+<tr><td><strong>向き</strong></td><td>広いコードベース理解、複数ファイルの変更</td><td>複雑なロジック、アルゴリズム問題</td></tr>
+<tr><td><strong>得意</strong></td><td>「何をすべきか」を計画する</td><td>「どうやるか」を深く考える</td></tr>
+</tbody></table></div>
+<p>→ 組み合わせも可能 (追加コスト注意)</p>
+
+<h2 id="cc-flow"><span class="h2-num">③</span>会話フローの制御 <span class="anchor-link">#</span></h2>
+
+<h3>Escape キー — 割り込み <span class="anchor-link">#</span></h3>
+<p>Claude が間違った方向に進んでいるとき停止させる:</p>
+<ul>
+  <li><code>Esc</code> を押す → Claude の応答を中断</li>
+  <li>修正指示を入力して再スタート</li>
+</ul>
+<p><strong>使用例:</strong> 複数のテストを書き始めたとき → Esc → 「まず1つだけ書いて」</p>
+
+<h3>ダブルEscape — 入力クリア <span class="anchor-link">#</span></h3>
+<p>入力途中のテキストをクリア (送信前)。</p>
+
+<h3>/compact — 会話を圧縮 <span class="anchor-link">#</span></h3>
+<p>コンテキストウィンドウがいっぱいになってきたとき:</p>
+<pre><span class="lang-tag">cmd</span><code>/compact</code></pre>
+<ul>
+  <li>会話履歴を要約して圧縮</li>
+  <li>重要なコンテキストを保持しながら空きスペースを確保</li>
+</ul>
+
+<h3>/clear — 新しい会話を開始 <span class="anchor-link">#</span></h3>
+<p>完全に無関係な新しいタスクに切り替えるとき:</p>
+<pre><span class="lang-tag">cmd</span><code>/clear</code></pre>
+<ul>
+  <li>完全に新鮮なコンテキストで開始</li>
+  <li>前の会話を削除するわけではない (<code>/resume</code> で戻れる)</li>
+</ul>
+
+<h3>/resume — 以前の会話を再開 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">cmd</span><code>/resume</code></pre>
+
+<h2 id="cc-custom"><span class="h2-num">③</span>カスタムコマンド <span class="anchor-link">#</span></h2>
+<p>繰り返す作業を <strong>スラッシュコマンド</strong> として自動化。</p>
+
+<h3>作成方法 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">tree</span><code>プロジェクトディレクトリ/
+└── .claude/
+    └── commands/
+        └── audit.md      ← /audit コマンドになる</code></pre>
+<p><strong>audit.md の例:</strong></p>
+<pre><span class="lang-tag">markdown</span><code>以下の手順で依存関係のセキュリティ監査を実行してください:
+1. `npm audit` を実行して脆弱なパッケージを確認
+2. `npm audit fix` で自動修正を適用
+3. `npm test` でテストが通ることを確認</code></pre>
+
+<h3>引数付きコマンド <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">markdown</span><code>$ARGUMENTS で受け取った引数を使ってテストを実行してください:
+- テストファイル: $ARGUMENTS
+- カバレッジレポートを生成すること</code></pre>
+<pre><span class="lang-tag">bash</span><code># 使用例
+/test src/auth.test.ts</code></pre>
+<p><strong>用途:</strong> チームの規約・コーディングスタイルに沿ったボイラープレート生成、デプロイ手順など</p>
+
+<h2 id="cc-mcp"><span class="h2-num">③</span>MCP サーバーとの統合 <span class="anchor-link">#</span></h2>
+
+<h3>MCP サーバーの追加 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">bash</span><code># ターミナル (Claude Code の外) で実行
+claude mcp add playwright npx @playwright/mcp@latest</code></pre>
+<p>→ Claude Code に <strong>Playwright</strong> でブラウザを操作する能力が追加される</p>
+
+<h3>パーミッション管理 <span class="anchor-link">#</span></h3>
+<p>初回使用時にツールごとの許可を求められる。毎回確認が不要な場合は <code>settings.json</code> で設定:</p>
+<pre><span class="lang-tag">json</span><code>{
+  "permissions": {
+    "allow": ["mcp__playwright__*"]
+  }
+}</code></pre>
+
+<h3>GitHub Actions での MCP パーミッション <span class="anchor-link">#</span></h3>
+<p>CI/CD 環境では GUI がないため、各MCPサーバーのツールを明示的にリストアップする必要がある:</p>
+<pre><span class="lang-tag">yaml</span><code>- name: Run Claude Code
+  uses: anthropics/claude-code-action@v1
+  with:
+    allowed_tools: "mcp__playwright__navigate,mcp__playwright__left_click,..."</code></pre>
+
+<h2 id="cc-github"><span class="h2-num">③</span>GitHub 統合 <span class="anchor-link">#</span></h2>
+
+<h3>セットアップ <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">cmd</span><code>/install-github-app</code></pre>
+<p>→ ガイドに従って:</p>
+<ol>
+  <li>GitHub に Claude Code アプリをインストール</li>
+  <li>API キーを追加</li>
+  <li>ワークフローファイルの PR が自動生成される</li>
+</ol>
+
+<h3>デフォルトで追加される GitHub Actions <span class="anchor-link">#</span></h3>
+<h4>1. メンションアクション</h4>
+<pre><span class="lang-tag">github</span><code>@claude このイシューを修正してください</code></pre>
+<p>→ Claude が:</p>
+<ul>
+  <li>タスク計画を作成</li>
+  <li>コードベース全体にアクセスして実装</li>
+  <li>PR を作成 (またはコメントに実装案を提示)</li>
+</ul>
+<h4>2. PR レビューアクション</h4>
+<ul>
+  <li>PR が作成/更新されると Claude が自動でコードレビュー</li>
+  <li>提案をコメントとして投稿</li>
+</ul>
+
+<h3>カスタムインストラクション <span class="anchor-link">#</span></h3>
+<p><code>.github/workflows/</code> 内のファイルにプロジェクト固有の指示を追加できる。</p>
+
+<h2 id="cc-hooks"><span class="h2-num">③</span>フック (Hooks) <span class="anchor-link">#</span></h2>
+<p>Claude Code のツール実行の <strong>前後にカスタムコマンドを実行</strong> する仕組み。</p>
+
+<h3>フックの種類 <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>フック</th><th>タイミング</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><strong>PreToolUse</strong></td><td>ツール実行 <strong>前</strong></td><td>ブロック、バリデーション</td></tr>
+<tr><td><strong>PostToolUse</strong></td><td>ツール実行 <strong>後</strong></td><td>フォーマット、テスト実行</td></tr>
+<tr><td><strong>Notification</strong></td><td>Claude が許可を求めるとき / 60秒アイドル後</td><td>通知送信</td></tr>
+<tr><td><strong>Stop</strong></td><td>Claude の応答完了時</td><td>最終チェック</td></tr>
+<tr><td><strong>SubagentStop</strong></td><td>サブエージェント完了時</td><td>-</td></tr>
+<tr><td><strong>PreCompact</strong></td><td>compact 操作の前</td><td>-</td></tr>
+<tr><td><strong>UserPromptSubmit</strong></td><td>ユーザーがプロンプトを送信した直後</td><td>前処理</td></tr>
+<tr><td><strong>SessionStart</strong></td><td>セッション開始/再開時</td><td>-</td></tr>
+<tr><td><strong>SessionEnd</strong></td><td>セッション終了時</td><td>-</td></tr>
+</tbody></table></div>
+
+<h3>フックの定義 <span class="anchor-link">#</span></h3>
+<p><code>.claude/settings.local.json</code> に定義:</p>
+<pre><span class="lang-tag">json</span><code>{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $PWD/hooks/read_hook.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $PWD/hooks/format_hook.js"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+<h3>フックスクリプトの仕組み <span class="anchor-link">#</span></h3>
+<ul>
+  <li><strong>入力</strong>: ツール呼び出しの JSON データが <code>stdin</code> から渡される</li>
+  <li><strong>出力</strong>: <code>stdout</code> への出力はClaudeへのフィードバックとなる</li>
+  <li><strong>stderr</strong>: エラーメッセージ (Claude に表示される)</li>
+  <li><strong>終了コード</strong>: <code>0</code> = 許可、<code>2</code> = ブロック (PreToolUse のみ)</li>
+</ul>
+<pre><span class="lang-tag">javascript</span><code>// .env ファイルの読み込みをブロックするフック例
+process.stdin.setEncoding("utf8");
+let input = "";
+process.stdin.on("data", (d) =&gt; (input += d));
+process.stdin.on("end", () =&gt; {
+    const toolArgs = JSON.parse(input);
+    const readPath = toolArgs.tool_input?.file_path || "";
+
+    if (readPath.includes(".env")) {
+        console.error(".env ファイルは読み込めません");
+        process.exit(2);  // ← ブロック
+    }
+    process.exit(0);  // ← 許可
+});</code></pre>
+<div class="callout warn">
+<div class="callout-title">⚠️ 注意</div>
+ツールごとに <code>tool_input</code> の形が異なる:
+<ul style="margin:0">
+  <li><code>Read</code> → <code>{file_path: "..."}</code></li>
+  <li><code>Grep</code> → <code>{pattern: "...", path: "..."}</code></li>
+  <li><code>Bash</code> → <code>{command: "..."}</code></li>
+</ul>
+</div>
+
+<h3>フックのセキュリティ注意事項 <span class="anchor-link">#</span></h3>
+<ul>
+  <li>スクリプトのパスは <strong>絶対パス</strong> を使うこと (パスインターセプト攻撃対策)</li>
+  <li><code>$PWD</code> プレースホルダーを使うとチーム間で設定ファイルを共有しやすい</li>
+  <li><code>settings.example.json</code> + <code>npm run setup</code> で <code>$PWD</code> を実際のパスに置換するパターンが一般的</li>
+</ul>
+
+<h3>実用的なフック例 <span class="anchor-link">#</span></h3>
+<h4>1. TypeScript 型チェックフック (PostToolUse)</h4>
+<pre><span class="lang-tag">javascript</span><code>// Write/Edit の後に tsc --noEmit を実行
+// → 型エラーを即座に Claude にフィードバック
+// → 関数シグネチャ変更時に呼び出し箇所の修正漏れを防ぐ</code></pre>
+
+<h4>2. コードレビューフック (PostToolUse)</h4>
+<pre><span class="lang-tag">javascript</span><code>// 特定ディレクトリのファイル変更後に別の Claude インスタンスでレビュー
+// → Agent SDK を使って Claude が Claude のコードをレビューする
+// → コスト・時間がかかるため、重要なディレクトリのみに限定</code></pre>
+
+<h2 id="cc-sdk"><span class="h2-num">③</span>Claude Code SDK <span class="anchor-link">#</span></h2>
+<p>Claude Code を <strong>プログラムから呼び出す</strong> ライブラリ。</p>
+
+<h3>インストール <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">bash</span><code>mkdir sdk-demo
+cd sdk-demo
+npm init -y
+npm install @anthropic-ai/claude-agent-sdk
+# ※ @anthropic-ai/claude-code (CLI本体) とは別パッケージ</code></pre>
+
+<h3>基本的な使い方 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">javascript</span><code>import { query } from "@anthropic-ai/claude-agent-sdk";
+
+const prompt = "現在のディレクトリのファイル一覧を表示してください";
+
+for await (const message of query({ prompt })) {
+    console.log(JSON.stringify(message, null, 2));
+    // ツール呼び出し、ツール結果、テキストなどが流れてくる
+}</code></pre>
+
+<h3>ツールの制限 <span class="anchor-link">#</span></h3>
+<pre><span class="lang-tag">javascript</span><code>for await (const message of query({
+    prompt,
+    options: {
+        allowedTools: ["Read", "Glob"]  // 許可するツールを限定
+    }
+})) {
+    // ...
+}</code></pre>
+
+<h3>SDK でできること <span class="anchor-link">#</span></h3>
+<ul>
+  <li>カスタムシステムプロンプト</li>
+  <li>MCP サーバーの指定</li>
+  <li>フックの設定</li>
+  <li>サブエージェント</li>
+  <li>セッションの再開</li>
+  <li>フックからの呼び出し (Claude が Claude をレビューするパターン)</li>
+</ul>
+
+<h2 id="cc-summary"><span class="h2-num">③-★</span>重要まとめ (Claude Code 編) <span class="anchor-link">#</span></h2>
+<div class="table-wrap"><table>
+<thead><tr><th>コマンド/機能</th><th>説明</th></tr></thead>
+<tbody>
+<tr><td><code>claude</code></td><td>Claude Code を起動</td></tr>
+<tr><td><code>/init</code></td><td>プロジェクトを分析して CLAUDE.md 生成</td></tr>
+<tr><td><code>/memory</code></td><td>情報を記憶に保存</td></tr>
+<tr><td><code>@ファイル名</code></td><td>ファイルをコンテキストに追加</td></tr>
+<tr><td><code>Ctrl+V</code></td><td>スクリーンショットを貼り付け</td></tr>
+<tr><td><code>/effort high</code></td><td>推論深度を上げる</td></tr>
+<tr><td><code>/plan</code></td><td>プランモードに切り替え</td></tr>
+<tr><td><code>Esc</code></td><td>Claude の実行を中断</td></tr>
+<tr><td><code>/compact</code></td><td>会話履歴を圧縮</td></tr>
+<tr><td><code>/clear</code></td><td>新しい会話を開始</td></tr>
+<tr><td><code>/resume</code></td><td>前の会話を再開</td></tr>
+<tr><td>カスタムコマンド</td><td><code>.claude/commands/*.md</code> ファイルを作成</td></tr>
+<tr><td><code>claude mcp add</code></td><td>MCP サーバーを追加</td></tr>
+<tr><td><code>/install-github-app</code></td><td>GitHub 統合をセットアップ</td></tr>
+<tr><td>PreToolUse</td><td>ツール実行前フック (exit 2でブロック可)</td></tr>
+<tr><td>PostToolUse</td><td>ツール実行後フック</td></tr>
+<tr><td><code>@anthropic-ai/claude-agent-sdk</code></td><td>プログラムから呼び出すためのSDK</td></tr>
+</tbody></table></div>
+
+<h3>フックの出口コードまとめ <span class="anchor-link">#</span></h3>
+<div class="table-wrap"><table>
+<thead><tr><th>終了コード</th><th>意味</th><th>適用</th></tr></thead>
+<tbody>
+<tr><td><code>0</code></td><td>許可・成功</td><td>PreToolUse / PostToolUse</td></tr>
+<tr><td><code>2</code></td><td>ブロック</td><td>PreToolUse のみ</td></tr>
+<tr><td>その他</td><td>エラー</td><td>-</td></tr>
+</tbody></table></div>
+
+<hr>
+
+<div class="callout tip">
+<div class="callout-title">🎯 試験対策のまとめ</div>
+<ul style="margin:0">
+  <li><strong>用語集の <span class="star">★★★</span> 項目は必ず暗記</strong> — 試験で頻出</li>
+  <li><strong>「間違えやすいペア」は徹底確認</strong> — workflow vs agent, PreToolUse vs PostToolUse, /compact vs /clear など</li>
+  <li><strong>コードパターンは手で書けるレベルに</strong> — API リクエストの基本形・ツール使用・MCP定義・フック</li>
+  <li><strong>数値スペックは暗記</strong> — TTL=1時間、最小1024トークン、画像100枚/5MB/トークン=(w×h)/750、RRFの定数k=60</li>
+  <li><strong>非互換ペア</strong> — 拡張思考と「温度」「アシスタント事前入力」は両立しない</li>
+</ul>
+</div>
+
+</main>
+</div>
+
+<button class="back-top" id="backTop" aria-label="トップへ戻る">↑</button>
+
+<!-- Radio Mode Overlay -->
+<div class="radio-overlay" id="radioOverlay" role="dialog" aria-label="ラジオモード">
+  <div class="radio-toolbar">
+    <span class="radio-title">📻 ラジオモード <span style="color:var(--text-muted);font-weight:400;font-size:12px;">— 読み上げ向けクリーンビュー</span></span>
+    <button id="radioPrev" title="前のセクションへ">⏮ 前</button>
+    <button id="radioPlay" class="primary" title="読み上げ開始 / 一時停止">▶ 読み上げ</button>
+    <button id="radioStop" title="停止">⏹ 停止</button>
+    <button id="radioNext" title="次のセクションへ">⏭ 次</button>
+    <select id="radioSection" title="セクションを選んで開始位置を指定">
+      <option value="-1">📍 開始位置を選択...</option>
+    </select>
+    <span class="rate-label">速度</span>
+    <select id="radioRate" title="読み上げ速度">
+      <option value="0.8">0.8x</option>
+      <option value="1" selected>1.0x</option>
+      <option value="1.2">1.2x</option>
+      <option value="1.5">1.5x</option>
+      <option value="1.8">1.8x</option>
+      <option value="2">2.0x</option>
+    </select>
+    <button id="radioClose" title="ラジオモードを閉じる (Esc)">✕ 閉じる</button>
+  </div>
+  <div class="radio-content" id="radioContent">
+    <!-- 動的に挿入 -->
+  </div>
+</div>
+
+<script>
+  // ===== Theme toggle =====
+  const themeToggle = document.getElementById('themeToggle');
+  const setTheme = (theme) => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('ccaf-theme', theme);
+    themeToggle.querySelector('.label-text').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    themeToggle.firstChild.textContent = theme === 'dark' ? '☀️ ' : '🌙 ';
+  };
+  themeToggle.addEventListener('click', () => {
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+  setTheme(localStorage.getItem('ccaf-theme') || 'light');
+
+  // ===== Insert progress checkboxes on all h2 and h3 with id =====
+  document.querySelectorAll('main h2[id], main h3[id]').forEach(h => {
+    if (h.closest('.toc-summary')) return;
+    if (h.querySelector('.progress-check')) return;
+    const key = 'ccaf-progress-' + h.id;
+    const label = document.createElement('label');
+    label.className = 'progress-check';
+    const done = localStorage.getItem(key) === '1';
+    if (done) label.classList.add('done');
+    label.innerHTML = '<input type="checkbox"' + (done ? ' checked' : '') + '><span>学習済</span>';
+    const input = label.querySelector('input');
+    input.addEventListener('change', (e) => {
+      e.stopPropagation();
+      if (input.checked) {
+        localStorage.setItem(key, '1');
+        label.classList.add('done');
+      } else {
+        localStorage.removeItem(key);
+        label.classList.remove('done');
+      }
+    });
+    label.addEventListener('click', (e) => e.stopPropagation());
+    h.appendChild(label);
+  });
+
+  // ===== Search (includes pre/code, scrolls to first hit) =====
+  const searchInput = document.getElementById('searchInput');
+  let searchTimer = null;
+  const clearHits = () => {
+    document.querySelectorAll('main mark.search-hit').forEach(m => {
+      const parent = m.parentNode;
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      parent.normalize();
+    });
+  };
+  const doSearch = (q) => {
+    clearHits();
+    if (!q || q.length < 1) return;
+    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const main = document.getElementById('main');
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        if (!n.textContent || !n.textContent.trim()) return NodeFilter.FILTER_REJECT;
+        const p = n.parentNode;
+        if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
+        if (p.closest('script, style, .progress-check, .anchor-link, .copy-btn, .lang-tag, .h2-num, .badge')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const targets = [];
+    let n;
+    while (n = walker.nextNode()) {
+      if (re.test(n.textContent)) targets.push(n);
+      re.lastIndex = 0;
+    }
+    let firstMark = null;
+    targets.forEach(node => {
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      const text = node.textContent;
+      re.lastIndex = 0;
+      let m;
+      while (m = re.exec(text)) {
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const mark = document.createElement('mark');
+        mark.className = 'search-hit';
+        mark.textContent = m[0];
+        frag.appendChild(mark);
+        if (!firstMark) firstMark = mark;
+        last = m.index + m[0].length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.replaceWith(frag);
+    });
+    if (firstMark) {
+      firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => doSearch(e.target.value.trim()), 180);
+  });
+
+  // ===== Hamburger menu =====
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const closeMenu = () => {
+    sidebar.classList.remove('open');
+    menuBackdrop.classList.remove('open');
+  };
+  const openMenu = () => {
+    sidebar.classList.add('open');
+    menuBackdrop.classList.add('open');
+  };
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  menuBackdrop.addEventListener('click', closeMenu);
+  sidebarClose.addEventListener('click', closeMenu);
+  sidebar.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 1000) closeMenu();
+    });
+  });
+
+  // ===== Radio Mode (clean reading view + Text-to-Speech) =====
+  const radioOverlay = document.getElementById('radioOverlay');
+  const radioContent = document.getElementById('radioContent');
+  const radioModeBtn = document.getElementById('radioModeBtn');
+  const radioPlay = document.getElementById('radioPlay');
+  const radioStop = document.getElementById('radioStop');
+  const radioClose = document.getElementById('radioClose');
+  const radioRate = document.getElementById('radioRate');
+  const radioPrev = document.getElementById('radioPrev');
+  const radioNext = document.getElementById('radioNext');
+  const radioSection = document.getElementById('radioSection');
+
+  let speakChunks = [];
+  let speakIdx = 0;
+  let speakPaused = false;
+
+  // TTS 用テキストのサニタイズ — 絵文字 / ★ / UI 記号などを読み上げ対象から除外
+  const sanitizeForTTS = (s) => {
+    if (!s) return '';
+    return s
+      .replace(/[\u{1F300}-\u{1FAFF}]/gu, ' ')   // 絵文字メイン (📘📑💡🎯📻 など)
+      .replace(/[\u{2600}-\u{27BF}]/gu, ' ')      // ☀☽⚠⚡★☆ など
+      .replace(/[\u{2300}-\u{23FF}]/gu, ' ')      // ⏸⏹⏭⏮⌨ など
+      .replace(/[\u{2B00}-\u{2BFF}]/gu, ' ')      // ⬆⬇⬅➡ など
+      .replace(/[️‍]/gu, '')             // 絵文字バリエーション選択子 / ZWJ
+      .replace(/[★☆※●○◆◇◎▲△▼▽■□]/g, ' ')
+      .replace(/[✓✕✖❌🔍📍]/g, ' ')
+      .replace(/学習済/g, '')
+      .replace(/#$/g, '')                          // 見出し末尾のアンカー記号
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const collectChunks = () => {
+    speakChunks = Array.from(radioContent.querySelectorAll('h2, h3, h4, p, li, pre, blockquote, .callout, tr'));
+  };
+
+  const populateSections = () => {
+    radioSection.innerHTML = '<option value="-1">📍 開始位置を選択...</option>';
+    speakChunks.forEach((el, i) => {
+      if (el.tagName === 'H2' || el.tagName === 'H3') {
+        const txt = sanitizeForTTS(el.textContent || '');
+        if (!txt) return;
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = (el.tagName === 'H2' ? '▶ ' : '    ・ ') + txt;
+        radioSection.appendChild(opt);
+      }
+    });
+  };
+
+  const buildRadioContent = () => {
+    const clone = document.getElementById('main').cloneNode(true);
+    // 不要要素を削除
+    clone.querySelectorAll('.progress-check, .anchor-link, .copy-btn, .h2-num, .badge, .keyboard-shortcuts, .lang-tag, button').forEach(el => el.remove());
+    // mark を解除
+    clone.querySelectorAll('mark.search-hit').forEach(m => {
+      const p = m.parentNode;
+      while (m.firstChild) p.insertBefore(m.firstChild, m);
+      p.removeChild(m);
+    });
+    // 見出しから id を残し、装飾だけリセット
+    clone.querySelectorAll('h2, h3, h4').forEach(h => {
+      h.style.display = '';
+    });
+    radioContent.innerHTML = '';
+    // ヒントを上部に
+    const hint = document.createElement('div');
+    hint.className = 'radio-hint';
+    hint.innerHTML = '📻 ラジオモード操作: <strong>▶ 読み上げ</strong> で開始 / <strong>見出しクリック</strong> でその箇所から再生 / <strong>⏮ ⏭</strong> でセクション移動 / <strong>📍 開始位置</strong> で章選択 / <strong>Esc</strong> で閉じる';
+    radioContent.appendChild(hint);
+    radioContent.appendChild(clone);
+    // チャンク収集 + セクションセレクト構築 (ラジオモードを開いた時点で1回)
+    collectChunks();
+    populateSections();
+  };
+
+  const playFromIndex = (idx) => {
+    if (!('speechSynthesis' in window)) {
+      alert('お使いのブラウザは音声読み上げ (Web Speech API) に対応していません。\n別ブラウザ (Chrome / Edge / Safari) でお試しください。');
+      return;
+    }
+    if (!speakChunks.length) collectChunks();
+    if (idx < 0 || idx >= speakChunks.length) return;
+    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+    speakPaused = false;
+    // cancel が完了するまで少し待つ (Chrome の挙動対策)
+    setTimeout(() => speakAt(idx), 80);
+    updatePlayUI();
+  };
+
+  const updatePlayUI = () => {
+    const speaking = window.speechSynthesis.speaking;
+    if (speaking && !speakPaused) {
+      radioPlay.textContent = '⏸ 一時停止';
+    } else if (speaking && speakPaused) {
+      radioPlay.textContent = '▶ 再開';
+    } else {
+      radioPlay.textContent = '▶ 読み上げ';
+    }
+  };
+
+  const stopSpeak = () => {
+    try { window.speechSynthesis.cancel(); } catch(e) {}
+    radioContent.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+    speakChunks = [];
+    speakIdx = 0;
+    speakPaused = false;
+    updatePlayUI();
+  };
+
+  const speakAt = (idx) => {
+    if (idx >= speakChunks.length) { stopSpeak(); return; }
+    speakIdx = idx;
+    radioContent.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+    const el = speakChunks[idx];
+    el.classList.add('speaking');
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e) {}
+    const text = sanitizeForTTS(el.innerText || el.textContent || '');
+    if (!text) {
+      // 中身が記号だけだった場合は次へ
+      setTimeout(() => speakAt(idx + 1), 30);
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = parseFloat(radioRate.value) || 1;
+    u.onend = () => { if (!speakPaused) speakAt(idx + 1); };
+    u.onerror = () => { speakAt(idx + 1); };
+    window.speechSynthesis.speak(u);
+  };
+
+  const startSpeak = () => {
+    if (!speakChunks.length) collectChunks();
+    if (speakChunks.length === 0) return;
+    playFromIndex(0);
+  };
+
+  const openRadio = () => {
+    buildRadioContent();
+    radioOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // モバイルで目次が開いていれば閉じる
+    closeMenu();
+  };
+  const closeRadioFn = () => {
+    radioOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    stopSpeak();
+  };
+
+  radioModeBtn.addEventListener('click', openRadio);
+  radioClose.addEventListener('click', closeRadioFn);
+  radioStop.addEventListener('click', stopSpeak);
+
+  radioPlay.addEventListener('click', () => {
+    const synth = window.speechSynthesis;
+    if (!('speechSynthesis' in window)) { startSpeak(); return; }
+    if (synth.speaking) {
+      if (speakPaused) {
+        synth.resume();
+        speakPaused = false;
+      } else {
+        synth.pause();
+        speakPaused = true;
+      }
+      updatePlayUI();
+    } else {
+      startSpeak();
+    }
+  });
+
+  radioRate.addEventListener('change', () => {
+    if (window.speechSynthesis.speaking) {
+      const idx = speakIdx;
+      window.speechSynthesis.cancel();
+      // 少し待ってから再開 (cancel 完了待ち)
+      setTimeout(() => speakAt(idx), 80);
+    }
+  });
+
+  // セクション選択ドロップダウン
+  radioSection.addEventListener('change', (e) => {
+    const i = parseInt(e.target.value);
+    if (i >= 0) {
+      playFromIndex(i);
+      e.target.selectedIndex = 0; // 選択をリセット (再選択しやすく)
+    }
+  });
+
+  // 前/次セクションへジャンプ
+  const jumpHeading = (dir) => {
+    if (!speakChunks.length) collectChunks();
+    if (!speakChunks.length) return;
+    let i = (typeof speakIdx === 'number' ? speakIdx : 0) + dir;
+    while (i >= 0 && i < speakChunks.length) {
+      const t = speakChunks[i].tagName;
+      if (t === 'H2' || t === 'H3' || t === 'H4') {
+        playFromIndex(i);
+        return;
+      }
+      i += dir;
+    }
+  };
+  radioPrev.addEventListener('click', () => jumpHeading(-1));
+  radioNext.addEventListener('click', () => jumpHeading(1));
+
+  // 見出しクリックでその箇所から再生
+  radioContent.addEventListener('click', (e) => {
+    const h = e.target.closest('h2, h3, h4');
+    if (!h || !radioContent.contains(h)) return;
+    if (!speakChunks.length) collectChunks();
+    const idx = speakChunks.indexOf(h);
+    if (idx >= 0) playFromIndex(idx);
+  });
+
+  // ===== Keyboard shortcuts =====
+  let gPressed = false;
+  document.addEventListener('keydown', (e) => {
+    // 入力中はショートカット無効 (Esc は除く)
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+      if (e.key === 'Escape') {
+        if (e.target.id === 'searchInput') {
+          e.target.value = '';
+          doSearch('');
+          e.target.blur();
+        }
+      }
+      return;
+    }
+    // ラジオモード時は Esc で閉じる以外は無効
+    if (radioOverlay.classList.contains('open')) {
+      if (e.key === 'Escape') closeRadioFn();
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (sidebar.classList.contains('open')) closeMenu();
+      return;
+    }
+    if (e.key === '/') { e.preventDefault(); searchInput.focus(); }
+    else if (e.key === 'r' || e.key === 'R') { openRadio(); }
+    else if (e.key === 'g') { gPressed = true; setTimeout(() => gPressed = false, 800); }
+    else if (gPressed && (e.key === 't' || e.key === 'T')) {
+      gPressed = false;
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+    else if (e.key === 't' || e.key === 'T') { themeToggle.click(); }
+  });
+
+  // ===== Progress bar + back-to-top =====
+  const progBar = document.getElementById('progressBar');
+  const backTop = document.getElementById('backTop');
+  const updateProgress = () => {
+    const sc = document.documentElement.scrollTop;
+    const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    progBar.style.width = (h > 0 ? (sc / h * 100) : 0) + '%';
+    backTop.classList.toggle('visible', sc > 600);
+  };
+  window.addEventListener('scroll', updateProgress);
+  updateProgress();
+  backTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+  // ===== Active sidebar link =====
+  const navLinks = document.querySelectorAll('aside.sidebar a[href^="#"]');
+  const sections = Array.from(navLinks).map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const updateActive = () => {
+    let active = null;
+    const offset = 100;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top < offset) active = s;
+    }
+    navLinks.forEach(a => a.classList.toggle('active', active && a.getAttribute('href') === '#' + active.id));
+  };
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+
+  // ===== Anchor link copy on heading click =====
+  document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(h => {
+    const link = h.querySelector('.anchor-link');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        history.pushState(null, '', '#' + h.id);
+        navigator.clipboard?.writeText(window.location.href);
+      });
+    }
+  });
+
+  // ===== Progress reset =====
+  document.getElementById('resetProgress').addEventListener('click', () => {
+    if (confirm('学習進捗をすべてリセットしますか?')) {
+      Object.keys(localStorage).filter(k => k.startsWith('ccaf-progress-')).forEach(k => localStorage.removeItem(k));
+      document.querySelectorAll('.progress-check').forEach(label => {
+        label.classList.remove('done');
+        const input = label.querySelector('input');
+        if (input) input.checked = false;
+      });
+    }
+  });
+
+  // ===== Copy buttons on pre blocks =====
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.querySelector('.copy-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'コピー';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const code = pre.querySelector('code');
+      const text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ コピー済';
+        setTimeout(() => btn.textContent = 'コピー', 1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
+
+  // ===== Cancel speech if window closes =====
+  window.addEventListener('beforeunload', () => {
+    try { window.speechSynthesis.cancel(); } catch(e) {}
+  });
+</script>
+
+</body>
+</html>
