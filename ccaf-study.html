@@ -601,6 +601,39 @@
     z-index: 140;
   }
   .menu-backdrop.open { display: block; }
+  /* === Actions overflow menu (mobile) === */
+  .actions-overflow { position: relative; display: none; }
+  .actions-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    min-width: 150px;
+    z-index: 200;
+    overflow: hidden;
+  }
+  .actions-dropdown.open { display: block; }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 16px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    text-align: left;
+  }
+  .dropdown-item:last-child { border-bottom: none; }
+  .dropdown-item:hover { background: var(--accent-soft); }
   .sidebar-close {
     display: none;
     background: var(--bg);
@@ -642,6 +675,8 @@
     .search-box { flex: 1; min-width: 0; max-width: none; }
     .topbar-actions .icon-btn { padding: 6px 8px; font-size: 12px; }
     .topbar-actions .label-text { display: none; }
+    .topbar-actions .desktop-only { display: none; }
+    .actions-overflow { display: block; }
   }
   @media (max-width: 600px) {
     main { padding: 16px 14px; font-size: 14.5px; }
@@ -743,7 +778,7 @@
   .radio-content h2:hover::after,
   .radio-content h3:hover::after,
   .radio-content h4:hover::after {
-    content: '▶ ここから再生';
+    content: '再生';
     font-size: 13px;
     color: var(--accent);
     font-weight: 600;
@@ -1111,9 +1146,17 @@
   </div>
   <div class="topbar-actions">
     <button class="icon-btn primary-action" id="radioModeBtn" title="ラジオモード (R) — 読み上げ向けのクリーンビューに切り替え">📻 <span class="label-text">ラジオモード</span></button>
-    <button class="icon-btn" id="themeToggle" title="ダークモード切り替え (T)">🌙 <span class="label-text">Dark</span></button>
-    <button class="icon-btn" id="resetProgress" title="進捗リセット">🔄 <span class="label-text">リセット</span></button>
-    <button class="icon-btn" onclick="window.print()" title="印刷">🖨️ <span class="label-text">印刷</span></button>
+    <button class="icon-btn desktop-only" id="themeToggle" title="ダークモード切り替え (T)">🌙 <span class="label-text">Dark</span></button>
+    <button class="icon-btn desktop-only" id="resetProgress" title="進捗リセット">🔄 <span class="label-text">リセット</span></button>
+    <button class="icon-btn desktop-only" onclick="window.print()" title="印刷">🖨️ <span class="label-text">印刷</span></button>
+    <div class="actions-overflow">
+      <button class="icon-btn" id="moreActionsBtn" aria-label="その他の操作" title="その他の操作">…</button>
+      <div class="actions-dropdown" id="actionsDropdown" role="menu">
+        <button class="dropdown-item" data-action="theme">🌙 ダークモード</button>
+        <button class="dropdown-item" data-action="reset">🔄 リセット</button>
+        <button class="dropdown-item" data-action="print">🖨️ 印刷</button>
+      </div>
+    </div>
   </div>
 </header>
 <div class="menu-backdrop" id="menuBackdrop"></div>
@@ -3409,13 +3452,13 @@ for await (const message of query({ prompt })) {
 <!-- Radio Mode Overlay -->
 <div class="radio-overlay" id="radioOverlay" role="dialog" aria-label="ラジオモード">
   <div class="radio-toolbar">
-    <span class="radio-title">📻 ラジオモード <span style="color:var(--text-muted);font-weight:400;font-size:12px;">— 読み上げ向けクリーンビュー</span></span>
-    <button id="radioPrev" title="前のセクションへ">⏮ 前</button>
-    <button id="radioPlay" class="primary" title="読み上げ開始 / 一時停止">▶ 読み上げ</button>
-    <button id="radioStop" title="停止">⏹ 停止</button>
-    <button id="radioNext" title="次のセクションへ">⏭ 次</button>
+    <span class="radio-title">ラジオモード <span style="color:var(--text-muted);font-weight:400;font-size:12px;">— 読み上げ向けクリーンビュー</span></span>
+    <button id="radioPrev" title="前のセクションへ">前へ</button>
+    <button id="radioPlay" class="primary" title="読み上げ開始 / 一時停止">再生</button>
+    <button id="radioStop" title="停止">停止</button>
+    <button id="radioNext" title="次のセクションへ">次へ</button>
     <select id="radioSection" title="セクションを選んで開始位置を指定">
-      <option value="-1">📍 開始位置を選択...</option>
+      <option value="-1">開始位置を選択...</option>
     </select>
     <span class="rate-label">速度</span>
     <select id="radioRate" title="読み上げ速度">
@@ -3426,7 +3469,7 @@ for await (const message of query({ prompt })) {
       <option value="1.8">1.8x</option>
       <option value="2">2.0x</option>
     </select>
-    <button id="radioClose" title="ラジオモードを閉じる (Esc)">✕ 閉じる</button>
+    <button id="radioClose" title="ラジオモードを閉じる (Esc)">閉じる</button>
   </div>
   <div class="radio-content" id="radioContent">
     <!-- 動的に挿入 -->
@@ -3608,6 +3651,24 @@ for await (const message of query({ prompt })) {
     });
   });
 
+  // ===== Actions overflow menu (mobile) =====
+  const moreActionsBtn = document.getElementById('moreActionsBtn');
+  const actionsDropdown = document.getElementById('actionsDropdown');
+  if (moreActionsBtn && actionsDropdown) {
+    moreActionsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      actionsDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', () => actionsDropdown.classList.remove('open'));
+    actionsDropdown.addEventListener('click', (e) => {
+      const action = e.target.closest('[data-action]')?.dataset.action;
+      if (action === 'theme') document.getElementById('themeToggle').click();
+      if (action === 'reset') document.getElementById('resetProgress').click();
+      if (action === 'print') window.print();
+      actionsDropdown.classList.remove('open');
+    });
+  }
+
   // ===== Radio Mode (clean reading view + Text-to-Speech) =====
   const radioOverlay = document.getElementById('radioOverlay');
   const radioContent = document.getElementById('radioContent');
@@ -3637,23 +3698,28 @@ for await (const message of query({ prompt })) {
       .replace(/[✓✕✖❌🔍📍]/g, ' ')
       .replace(/学習済/g, '')
       .replace(/#$/g, '')                          // 見出し末尾のアンカー記号
+      .replace(/→|←|↑|↓|⇒|⇐/g, ', ')           // 矢印をポーズに変換
+      .replace(/\(例[:：]/g, '例: ')               // (例: → 例: でカッコ除去
+      .replace(/[()（）「」『』【】〔〕〈〉《》]/g, ' ') // 括弧類を空白に
+      .replace(/[|｜/\\]/g, ', ')                  // 区切り記号をポーズに
+      .replace(/`([^`]+)`/g, '$1')                 // バッククォートを除去してコードを残す
       .replace(/\s+/g, ' ')
       .trim();
   };
 
   const collectChunks = () => {
-    speakChunks = Array.from(radioContent.querySelectorAll('h2, h3, h4, p, li, pre, blockquote, .callout, tr'));
+    speakChunks = Array.from(radioContent.querySelectorAll('h2, h3, h4, p, li, blockquote, .callout, tr'));
   };
 
   const populateSections = () => {
-    radioSection.innerHTML = '<option value="-1">📍 開始位置を選択...</option>';
+    radioSection.innerHTML = '<option value="-1">開始位置を選択...</option>';
     speakChunks.forEach((el, i) => {
       if (el.tagName === 'H2' || el.tagName === 'H3') {
         const txt = sanitizeForTTS(el.textContent || '');
         if (!txt) return;
         const opt = document.createElement('option');
         opt.value = String(i);
-        opt.textContent = (el.tagName === 'H2' ? '▶ ' : '    ・ ') + txt;
+        opt.textContent = (el.tagName === 'H2' ? '' : '    ') + txt;
         radioSection.appendChild(opt);
       }
     });
@@ -3662,7 +3728,7 @@ for await (const message of query({ prompt })) {
   const buildRadioContent = () => {
     const clone = document.getElementById('main').cloneNode(true);
     // 不要要素を削除
-    clone.querySelectorAll('.progress-check, .anchor-link, .copy-btn, .h2-num, .badge, .keyboard-shortcuts, .lang-tag, button').forEach(el => el.remove());
+    clone.querySelectorAll('.progress-check, .anchor-link, .copy-btn, .h2-num, .badge, .keyboard-shortcuts, .lang-tag, button, pre').forEach(el => el.remove());
     // mark を解除
     clone.querySelectorAll('mark.search-hit').forEach(m => {
       const p = m.parentNode;
@@ -3673,11 +3739,27 @@ for await (const message of query({ prompt })) {
     clone.querySelectorAll('h2, h3, h4').forEach(h => {
       h.style.display = '';
     });
+    // 用語集テーブルに識別クラスを付与 (英単語列を含むテーブル)
+    clone.querySelectorAll('table').forEach(tbl => {
+      const firstTh = tbl.querySelector('th');
+      if (firstTh && firstTh.textContent.includes('英単語')) {
+        tbl.classList.add('vocab-table');
+      }
+    });
+    // テキストノードの絵文字・記号を表示からも除去
+    const cleanNodes = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent = sanitizeForTTS(node.textContent);
+        return;
+      }
+      node.childNodes.forEach(cleanNodes);
+    };
+    cleanNodes(clone);
     radioContent.innerHTML = '';
-    // ヒントを上部に
+    // ヒントを上部に (絵文字なしプレーンテキスト)
     const hint = document.createElement('div');
     hint.className = 'radio-hint';
-    hint.innerHTML = '📻 ラジオモード操作: <strong>▶ 読み上げ</strong> で開始 / <strong>見出しクリック</strong> でその箇所から再生 / <strong>⏮ ⏭</strong> でセクション移動 / <strong>📍 開始位置</strong> で章選択 / <strong>Esc</strong> で閉じる';
+    hint.innerHTML = 'ラジオモード操作: <strong>再生</strong> で開始 / <strong>見出しクリック</strong> でその箇所から再生 / <strong>前へ・次へ</strong> でセクション移動 / <strong>開始位置</strong> で章選択 / <strong>Esc</strong> で閉じる';
     radioContent.appendChild(hint);
     radioContent.appendChild(clone);
     // チャンク収集 + セクションセレクト構築 (ラジオモードを開いた時点で1回)
@@ -3702,11 +3784,11 @@ for await (const message of query({ prompt })) {
   const updatePlayUI = () => {
     const speaking = window.speechSynthesis.speaking;
     if (speaking && !speakPaused) {
-      radioPlay.textContent = '⏸ 一時停止';
+      radioPlay.textContent = '一時停止';
     } else if (speaking && speakPaused) {
-      radioPlay.textContent = '▶ 再開';
+      radioPlay.textContent = '再開';
     } else {
-      radioPlay.textContent = '▶ 読み上げ';
+      radioPlay.textContent = '再生';
     }
   };
 
@@ -3719,6 +3801,38 @@ for await (const message of query({ prompt })) {
     updatePlayUI();
   };
 
+  // テキスト中の英字比率から言語を自動判定
+  const detectLang = (text) => {
+    const ascii = (text.match(/[a-zA-Z]/g) || []).length;
+    const total = text.replace(/[\s\d]/g, '').length;
+    return total > 0 && ascii / total > 0.45 ? 'en-US' : 'ja-JP';
+  };
+
+  // 用語集テーブル行を英語(en-US) → 日本語(ja-JP) の順に読み上げる
+  const speakVocabRow = (el, onDone) => {
+    const cells = el.querySelectorAll('td');
+    if (cells.length < 2) { onDone(); return; }
+    const term = sanitizeForTTS(cells[0].textContent);
+    const meaning = sanitizeForTTS(cells[cells.length - 1].textContent);
+    if (!term && !meaning) { onDone(); return; }
+    const rate = parseFloat(radioRate.value) || 1;
+    const u1 = new SpeechSynthesisUtterance(term || meaning);
+    u1.lang = 'en-US';
+    u1.rate = rate;
+    u1.onend = () => {
+      if (speakPaused) return;
+      if (!meaning || meaning === term) { onDone(); return; }
+      const u2 = new SpeechSynthesisUtterance(meaning);
+      u2.lang = 'ja-JP';
+      u2.rate = rate;
+      u2.onend = () => { if (!speakPaused) onDone(); };
+      u2.onerror = onDone;
+      window.speechSynthesis.speak(u2);
+    };
+    u1.onerror = onDone;
+    window.speechSynthesis.speak(u1);
+  };
+
   const speakAt = (idx) => {
     if (idx >= speakChunks.length) { stopSpeak(); return; }
     speakIdx = idx;
@@ -3726,6 +3840,13 @@ for await (const message of query({ prompt })) {
     const el = speakChunks[idx];
     el.classList.add('speaking');
     try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e) {}
+
+    // 用語集テーブル行は英語→日本語の順に別々に読む
+    if (el.tagName === 'TR' && el.closest('.vocab-table')) {
+      speakVocabRow(el, () => { if (!speakPaused) speakAt(idx + 1); });
+      return;
+    }
+
     const text = sanitizeForTTS(el.innerText || el.textContent || '');
     if (!text) {
       // 中身が記号だけだった場合は次へ
@@ -3733,7 +3854,7 @@ for await (const message of query({ prompt })) {
       return;
     }
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ja-JP';
+    u.lang = detectLang(text);
     u.rate = parseFloat(radioRate.value) || 1;
     u.onend = () => { if (!speakPaused) speakAt(idx + 1); };
     u.onerror = () => { speakAt(idx + 1); };
